@@ -1,0 +1,52 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System.Linq;
+
+namespace SubPhases
+{
+
+    public class PlanningStartSubPhase : GenericSubPhase
+    {
+
+        public override void Start()
+        {
+            Name = "Planning start";
+            UpdateHelpInfo();
+        }
+
+        public override void Initialize()
+        {
+            Phases.Events.CallPlanningPhaseTrigger(delegate {
+                Phases.FinishSubPhase(this.GetType());
+            });
+        }
+
+        public override void Next()
+        {
+            GenericSubPhase subphase = Phases.StartTemporarySubPhaseNew("Notification", typeof(NotificationSubPhase), StartPlanningSubPhase);
+            (subphase as NotificationSubPhase).TextToShow = "Planning";
+            subphase.Start();
+        }
+
+        private void StartPlanningSubPhase()
+        {
+            Phases.CurrentSubPhase = new PlanningSubPhase();
+            Phases.CurrentSubPhase.Start();
+            Phases.CurrentSubPhase.Prepare();
+            Phases.CurrentSubPhase.Initialize();
+        }
+
+        public override bool ThisShipCanBeSelected(Ship.GenericShip ship, int mouseKeyIsPressed)
+        {
+            return false;
+        }
+
+        public override bool AnotherShipCanBeSelected(Ship.GenericShip targetShip, int mouseKeyIsPressed)
+        {
+            return false;
+        }
+
+    }
+
+}

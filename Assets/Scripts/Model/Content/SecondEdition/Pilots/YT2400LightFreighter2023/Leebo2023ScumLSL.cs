@@ -1,0 +1,36 @@
+﻿using Content;
+using System.Collections.Generic;
+using Upgrade;
+
+namespace Ship
+{
+    namespace SecondEdition.YT2400LightFreighter2023
+    {
+        public class Leebo2023ScumLSL : YT2400LightFreighter2023
+        {
+            public Leebo2023ScumLSL() : base()
+            {
+                PilotInfo = new PilotCardInfo(
+                    "Leebo",
+                    3,
+                    69,
+                    isLimited: true,
+                    abilityType: typeof(Abilities.SecondEdition.Leebo2023Ability),
+                    extraUpgradeIcon: UpgradeType.Talent,
+                    factionOverride: Faction.Scum,
+                    tags: new List<Tags>
+                    {
+                        Tags.Droid
+                    }
+                );
+
+                ShipInfo.ActionIcons.SwitchToDroidActions();
+                ShipInfo.UpgradeIcons.Upgrades.Remove(UpgradeType.Illicit);
+                ShipInfo.UpgradeIcons.Upgrades.Add(UpgradeType.Crew);
+
+                PilotNameCanonical = "leebo-swz103-lsl-scumandvillainy";
+            }
+        }
+    }
+}
+

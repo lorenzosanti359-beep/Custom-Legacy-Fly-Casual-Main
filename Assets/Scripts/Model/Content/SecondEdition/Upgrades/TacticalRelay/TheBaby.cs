@@ -1,0 +1,205 @@
+﻿using Ship;
+using SubPhases;
+using System;
+using Tokens;
+using Upgrade;
+using Abilities.SecondEdition;
+
+namespace UpgradesList.SecondEdition
+{
+    public class TheChildv2 : GenericUpgrade
+    {
+        public TheChildv2() : base()
+        {
+            UpgradeInfo = new UpgradeCardInfo
+            (
+                "The Child",
+                UpgradeType.TacticalRelay,
+                cost: 6,
+                abilityType: typeof(Abilities.SecondEdition.TheChildAbilityv1),
+                restriction: new FactionRestriction(Faction.Imperial, Faction.Rebel, Faction.Scum),
+                addForce: 2
+            );
+        }
+    }
+}
+
+namespace Abilities.SecondEdition
+{
+    public class TheChildAbilityv1 : GenericAbility
+    {
+        public override void ActivateAbility()
+        {
+            HostShip.OnCheckForceRecurring += DenyForceRecurring;
+            HostShip.OnAttackFinishAsDefender += CheckForceRegenAbility;
+            Phases.Events.OnSetupEnd += RegisterAskToAssignConditions;
+        }
+
+        public override void DeactivateAbility()
+        {
+            HostShip.OnCheckForceRecurring -= DenyForceRecurring;
+            HostShip.OnAttackFinishAsDefender -= CheckForceRegenAbility;
+        }
+
+        private void DenyForceRecurring(ref bool isForceRecurring)
+        {
+            isForceRecurring = false;
+        }
+
+        private void CheckForceRegenAbility(GenericShip ship)
+        {
+            if (Combat.DamageInfo.IsDefenderSufferedDamage && HostShip.State.Force < HostShip.State.MaxForce)
+            {
+                Triggers.RegisterTrigger(
+                        new Trigger()
+                        {
+                            Name = "Recover Force",
+                            TriggerType = TriggerTypes.OnAttackFinish,
+                            TriggerOwner = HostShip.Owner.PlayerNo,
+                            EventHandler = ForceRegen
+                        }
+                    );                
+            }
+        }
+
+        private void ForceRegen(object sender, EventArgs e)
+        {
+            Messages.ShowInfo($"{HostUpgrade.UpgradeInfo.Name}: {HostShip.PilotInfo.PilotName} recovers 1 Force");
+            HostShip.State.RestoreForce();
+            Triggers.FinishTrigger();
+        }
+
+        private void RegisterAskToAssignConditions()
+        {
+            Phases.Events.OnSetupEnd -= RegisterAskToAssignConditions;
+            RegisterAbilityTrigger(TriggerTypes.OnSetupEnd, AskOpponentToSelect2Ships);
+        }
+
+        private void AskOpponentToSelect2Ships(object sender, EventArgs e)
+        {
+            MultiSelectionSubphase subphase = Phases.StartTemporarySubPhaseNew<MultiSelectionSubphase>("The Child", Triggers.FinishTrigger);
+
+            subphase.RequiredPlayer = HostShip.Owner.AnotherPlayer.PlayerNo;
+
+            subphase.Filter = FilterSelection;
+            subphase.GetAiPriority = GetAiPriority;
+            subphase.MaxToSelect = 2;
+            subphase.WhenDone = AssignConditions;
+
+            subphase.DescriptionShort = HostUpgrade.UpgradeInfo.Name;
+            subphase.DescriptionLong = "Choose 2 ships to assign Merciless Pursuit condition";
+            subphase.ImageSource = HostUpgrade;
+
+            subphase.Start();
+        }
+
+        private bool FilterSelection(GenericShip ship)
+        {
+            return ship.Owner.PlayerNo == HostShip.Owner.AnotherPlayer.PlayerNo;
+        }
+
+        private int GetAiPriority(GenericShip ship)
+        {
+            return ship.PilotInfo.Cost;
+        }
+
+        private void AssignConditions(Action callback)
+        {
+            foreach (GenericShip ship in Selection.MultiSelectedShips)
+            {
+                Messages.ShowInfo($"Merciless Pursuit condition is assigned to {ship.PilotInfo.PilotName}");
+                ship.Tokens.AssignCondition
+                (
+                    new Conditions.MercilessPursuitConditionv1(ship) { TheChild = HostUpgrade as UpgradesList.SecondEdition.TheChild }
+                );
+            }
+            callback();
+        }
+    }
+}
+
+namespace Conditions
+{
+    public class MercilessPursuitConditionv1 : GenericToken
+    {
+        public GenericUpgrade SourceUpgrade;
+        public UpgradesList.SecondEdition.TheChild TheChild;
+
+        private GenericShip CachedAttacker;
+        private GenericShip CachedDefender;
+
+        public MercilessPursuitConditionv1(GenericShip host) : base(host)
+        {
+            Name = ImageName = "Merciless Pursuit Condition";
+            Temporary = false;
+
+            Tooltip = "https://i.imgur.com/K9qa95i.png";
+        }
+
+        public override void WhenAssigned()
+        {
+            Host.OnAttackFinishAsAttacker += CheckBonus;
+        }
+
+        public override void WhenRemoved()
+        {
+            Host.OnAttackFinishAsAttacker -= CheckBonus;
+        }
+
+        private void CheckBonus(GenericShip ship)
+        {
+            if (Combat.Defender.UpgradeBar.HasUpgradeInstalled(typeof(UpgradesList.SecondEdition.TheChild)) && !Combat.Defender.IsDestroyed)
+            {
+                CachedAttacker = Combat.Attacker;
+                CachedDefender = Combat.Defender;
+                Triggers.RegisterTrigger
+                (
+                    new Trigger()
+                    {
+                        Name = "Merciless Pursuit",
+                        TriggerType = TriggerTypes.OnAttackFinish,
+                        TriggerOwner = Host.Owner.PlayerNo,
+                        EventHandler = AskToAcqureLock
+                    }
+                );
+            }
+        }
+
+        private void AskToAcqureLock(object sender, EventArgs e)
+        {
+            MercilessPursuitDecisionSubphase subphase = Phases.StartTemporarySubPhaseNew<MercilessPursuitDecisionSubphase>(
+                "Merciless Pursuit Decision",
+                delegate
+                {
+                    Phases.FinishSubPhase(Phases.CurrentSubPhase.GetType());
+                    Phases.FinishSubPhase(Phases.CurrentSubPhase.GetType());
+                    Triggers.FinishTrigger();
+                });
+
+            subphase.DescriptionShort = "Merciless Pursuit";
+            subphase.DescriptionLong = "Do you want to acquire a lock on the defender?";
+            subphase.ImageSource = TheChild;
+
+            subphase.AddDecision("Yes", AcquireLock);
+            subphase.AddDecision("No", SkipLock);
+
+            subphase.DecisionOwner = Host.Owner;
+            subphase.DefaultDecisionName = "Yes";
+
+            subphase.Start();
+        }
+
+        private void AcquireLock(object sender, EventArgs e)
+        {
+            Messages.ShowInfo($"Merciless Pursuit: {CachedAttacker.PilotInfo.PilotName} aquires a lock on {CachedDefender.PilotInfo.PilotName}");
+            ActionsHolder.AcquireTargetLock(CachedAttacker, CachedDefender, DecisionSubPhase.ConfirmDecision, DecisionSubPhase.ConfirmDecision);
+        }
+
+        private void SkipLock(object sender, EventArgs e)
+        {
+            DecisionSubPhase.ConfirmDecision();
+        }
+
+        public class MercilessPursuitDecisionSubphase : DecisionSubPhase { };
+    }
+}

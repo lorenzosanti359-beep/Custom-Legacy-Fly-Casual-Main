@@ -1,0 +1,57 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+
+namespace Movement
+{
+
+    public class SegnorsLoopMovement : NonStraightMovement
+    {
+        private readonly float[] BANK_SCALES = new float[] { 4.6f, 7.4f, 10.4f };
+
+        public SegnorsLoopMovement(int speed, ManeuverDirection direction, ManeuverBearing bearing, MovementComplexity color) : base(speed, direction, bearing, color)
+        {
+            RotationEndDegrees = 180;
+        }
+
+        public override IEnumerator Perform()
+        {
+            Initialize();
+
+            movementPrediction = new MovementPrediction(TheShip, this);
+            yield return movementPrediction.CalculateMovementPredicition();
+        }
+
+        protected override float SetProgressTarget()
+        {
+            return 45f;
+        }
+
+        protected override float SetAnimationSpeed()
+        {
+            return 2f * 360f / Speed;
+        }
+
+        protected override float SetTurningAroundDistance()
+        {
+            return GetMovement1() * BANK_SCALES[Speed - 1];
+        }
+
+        protected override void ManeuverEndRotation(Action callBack)
+        {
+            if (!TheShip.IsBumped)
+            {
+                Phases.StartTemporarySubPhaseOld("Segnor's Loop", typeof(SubPhases.KoiogranTurnSubPhase), callBack);
+            }
+            else
+            {
+                //todo: Error about failed koiogran turn
+                //Messages.ShowError("Koiogran Turn is failed due to collision");
+                callBack();
+            }
+        }
+    }
+
+}
+

@@ -1,0 +1,101 @@
+﻿using Tokens;
+using Upgrade;
+using Ship;
+using System.Collections.Generic;
+
+namespace UpgradesList.SecondEdition
+{
+    public class MagPulseWarheads : GenericSpecialWeapon, IVariableCost
+    {
+        public MagPulseWarheads() : base()
+        {
+            UpgradeInfo = new UpgradeCardInfo(
+                "Mag-Pulse Warheads",
+                UpgradeType.Missile,
+                cost: 5,
+                weaponInfo: new SpecialWeaponInfo(
+                    attackValue: 3,
+                    minRange: 1,
+                    maxRange: 3,
+                    requiresToken: typeof(BlueTargetLockToken),
+                    charges: 2
+                ),
+                abilityType: typeof(Abilities.SecondEdition.MagPulseDamageAbility)
+            );
+
+            NameCanonical = "magpulsewarheads";
+        }
+
+        public void UpdateCost(GenericShip ship)
+        {
+            Dictionary<int, int> initiativeToCost = new Dictionary<int, int>()
+            {
+                {0, 4},
+                {1, 4},
+                {2, 4},
+                {3, 5},
+                {4, 5},
+                {5, 5},
+                {6, 5}
+            };
+
+            UpgradeInfo.Cost = initiativeToCost[ship.PilotInfo.Initiative];
+        }
+    }
+}
+
+
+namespace Abilities.SecondEdition
+{
+    //Attack (Lock): Spend 1 charge. If this attack hits, the defender suffers 1 crit damage and gains 1 deplete and 1 jam token. 
+    //Then cancel all hit / crit results.
+    public class MagPulseDamageAbility : GenericAbility
+    {
+        public override void ActivateAbility()
+        {
+            HostShip.OnShotHitAsAttacker += RegisterWeaponEffect;
+        }
+
+        public override void DeactivateAbility()
+        {
+            HostShip.OnShotHitAsAttacker -= RegisterWeaponEffect;
+        }
+
+        protected void RegisterWeaponEffect()
+        {
+            if (Combat.ChosenWeapon == HostUpgrade)
+            {
+                Triggers.RegisterTrigger(new Trigger()
+                {
+                    Name = "Mag-Pulse weapon effect",
+                    TriggerType = TriggerTypes.OnShotHit,
+                    TriggerOwner = Combat.Attacker.Owner.PlayerNo,
+                    EventHandler = WeaponEffect
+                });
+            }
+        }
+
+        protected void WeaponEffect(object sender, System.EventArgs e)
+        {
+            Combat.DiceRollAttack.CancelAllResults();
+            Combat.DiceRollAttack.RemoveAllFailures();
+
+            DamageSourceEventArgs weaponDamage = new DamageSourceEventArgs()
+            {
+                Source = HostShip,
+                DamageType = DamageTypes.ShipAttack
+            };
+
+            Combat.Defender.Damage.TryResolveDamage(0, weaponDamage, AssignTokens, 1);                     
+        }
+
+        protected void AssignTokens()
+        {
+            Combat.Defender.Tokens.AssignToken(
+                typeof(DepleteToken),
+                () => Combat.Defender.Tokens.AssignToken(
+                    new JamToken(Combat.Defender, HostShip.Owner), Triggers.FinishTrigger));
+        }
+    }
+
+}

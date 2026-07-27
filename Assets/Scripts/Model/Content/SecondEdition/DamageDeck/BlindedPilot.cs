@@ -1,0 +1,62 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using ActionsList;
+using Ship;
+using UnityEngine;
+
+namespace DamageDeckCardSE
+{
+    public class BlindedPilot : GenericDamageCard
+    {
+        public BlindedPilot()
+        {
+            Name = "Blinded Pilot";
+            Type = CriticalCardType.Pilot;
+            AiAvoids = true;
+            ImageUrl = "https://raw.githubusercontent.com/sampson-matt/FlyCasualLegacyCustomCards/refs/heads/main/DamageCards/blinded-pilot.png";
+        }
+
+        public override void ApplyEffect(object sender, EventArgs e)
+        {
+            Host.OnTryAddAvailableDiceModification += RestrictActionEffectsToForceOnly;
+            Host.OnGenerateActions += CallAddCancelCritAction;
+
+            Host.Tokens.AssignCondition(typeof(Tokens.BlindedPilotSECritToken));
+            Triggers.FinishTrigger();
+        }
+
+        private void RestrictActionEffectsToForceOnly(GenericShip ship, GenericAction diceModification, ref bool canBeUsed)
+        {            
+            if (Combat.AttackStep == CombatStep.Attack
+                && Combat.Attacker.ShipId == Host.ShipId
+                && !(diceModification is ForceAction)
+                && !diceModification.IsNotRealDiceModification)
+            {
+                canBeUsed = false;
+            }
+        }
+
+        public override void DiscardEffect()
+        {
+            base.DiscardEffect();
+
+            Host.OnTryAddAvailableDiceModification -= RestrictActionEffectsToForceOnly;
+            Host.OnGenerateActions -= CallAddCancelCritAction;
+            Messages.ShowInfo(Host.PilotInfo.PilotName + " is no longer Blinded and may fully modify their attacks");
+            Host.Tokens.RemoveCondition(typeof(Tokens.BlindedPilotSECritToken));            
+        }         
+    }
+
+}
+
+namespace Tokens
+{
+    public class BlindedPilotSECritToken : CritToken
+    {
+        public BlindedPilotSECritToken(GenericShip host) : base(host)
+        {
+            Tooltip = "https://raw.githubusercontent.com/sampson-matt/FlyCasualLegacyCustomCards/refs/heads/main/DamageCards/blinded-pilot.png";
+        }
+    }
+}

@@ -1,0 +1,741 @@
+fileFormatVersion: 2
+guid: 529b1386ffd34734b82ffe2994ad7e95
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: small_base_Cube.002_TieBomber_TEX00000
+    100002: Stand_sep19_TieBomber_TEX00000
+    100004: Stand_sep20_TieBomber_TEX00000
+    100006: Stand_sep21_TieBomber_TEX00000
+    100008: Stand_sep22_TieBomber_TEX00000
+    100010: Stand_sep23_TieBomber_TEX00000
+    100012: Stand_sep24_TieBomber_TEX00000
+    100014: Stand_sep25_TieBomber_TEX00000
+    100016: Stand_sep26_TieBomber_TEX00000
+    100018: Stand_sep27_TieBomber_TEX00000
+    100020: Stand_sep31_TieBomber_TEX00000
+    100022: Stand_sep35_TieBomber_TEX00000
+    100024: Stand_sep36_TieBomber_TEX00000
+    100026: Stand_sep37_TieBomber_TEX00000
+    100028: Stand_sep38_TieBomber_TEX00000
+    100030: Stand_sep39_TieBomber_TEX00000
+    100032: Stand_sep40_TieBomber_TEX00000
+    100034: Stand_sep41_TieBomber_TEX00000
+    100036: Stand_sep42_TieBomber_TEX00000
+    100038: Stand_sep43_TieBomber_TEX00000
+    100040: Stand_sep44_TieBomber_TEX00000
+    100042: Stand_sep45_TieBomber_TEX00000
+    100044: Stand_sep46_TieBomber_TEX00000
+    100046: Stand_sep47_TieBomber_TEX00000
+    100048: Stand_sep48_TieBomber_TEX00000
+    100050: Stand_sep49_TieBomber_TEX00000
+    100052: Stand_sep50_TieBomber_TEX00000
+    100054: Stand_sep51_TieBomber_TEX00000
+    100056: Stand_sep52_TieBomber_TEX00000
+    100058: Stand_sep53_TieBomber_TEX00000
+    100060: Stand_sep54_TieBomber_TEX00000
+    100062: Stand_sep55_TieBomber_TEX00000
+    100064: Stand_sep56_TieBomber_TEX00000
+    100066: Stand_sep57_TieBomber_TEX00000
+    100068: Stand_sep58_TieBomber_TEX00000
+    100070: Stand_sep59_TieBomber_TEX00000
+    100072: Stand_sep60_TieBomber_TEX00000
+    100074: Stand_sep61_TieBomber_TEX00000
+    100076: Stand_sep62_TieBomber_TEX00000
+    100078: Stand_sep63_TieBomber_TEX00000
+    100080: Stand_sep64_TieBomber_TEX00000
+    100082: Stand_sep65_TieBomber_TEX00000
+    100084: Stand_sep66_TieBomber_TEX00000
+    100086: Stand_sep67_TieBomber_TEX00000
+    100088: Stand_sep68_TieBomber_TEX00000
+    100090: Stand_sep69_TieBomber_TEX00000
+    100092: Stand_sep70_TieBomber_TEX00000
+    100094: Stand_sep71_TieBomber_TEX00000
+    100096: Stand_sep72_TieBomber_TEX00000
+    100098: Stand_sep73_TieBomber_TEX00000
+    100100: Stand_sep74_TieBomber_TEX00000
+    100102: Stand_sep75_TieBomber_TEX00000
+    100104: Stand_sep76_TieBomber_TEX00000
+    100106: Stand_sep77_TieBomber_TEX00000
+    100108: Stand_sep78_TieBomber_TEX00000
+    100110: Stand_sep79_TieBomber_TEX00000
+    100112: Stand_sep80_TieBomber_TEX00000
+    100114: Stand_sep81_TieBomber_TEX00000
+    100116: Stand_sep82_TieBomber_TEX00000
+    100118: Stand_sep83_TieBomber_TEX00000
+    100120: Stand_sep84_TieBomber_TEX00000
+    100122: Stand_sep85_TieBomber_TEX00000
+    100124: Stand_sep86_TieBomber_TEX00000
+    100126: Stand_sep87_TieBomber_TEX00000
+    100128: Stand_TieBomber_TEX00000
+    100130: //RootNode
+    400000: small_base_Cube.002_TieBomber_TEX00000
+    400002: Stand_sep19_TieBomber_TEX00000
+    400004: Stand_sep20_TieBomber_TEX00000
+    400006: Stand_sep21_TieBomber_TEX00000
+    400008: Stand_sep22_TieBomber_TEX00000
+    400010: Stand_sep23_TieBomber_TEX00000
+    400012: Stand_sep24_TieBomber_TEX00000
+    400014: Stand_sep25_TieBomber_TEX00000
+    400016: Stand_sep26_TieBomber_TEX00000
+    400018: Stand_sep27_TieBomber_TEX00000
+    400020: Stand_sep31_TieBomber_TEX00000
+    400022: Stand_sep35_TieBomber_TEX00000
+    400024: Stand_sep36_TieBomber_TEX00000
+    400026: Stand_sep37_TieBomber_TEX00000
+    400028: Stand_sep38_TieBomber_TEX00000
+    400030: Stand_sep39_TieBomber_TEX00000
+    400032: Stand_sep40_TieBomber_TEX00000
+    400034: Stand_sep41_TieBomber_TEX00000
+    400036: Stand_sep42_TieBomber_TEX00000
+    400038: Stand_sep43_TieBomber_TEX00000
+    400040: Stand_sep44_TieBomber_TEX00000
+    400042: Stand_sep45_TieBomber_TEX00000
+    400044: Stand_sep46_TieBomber_TEX00000
+    400046: Stand_sep47_TieBomber_TEX00000
+    400048: Stand_sep48_TieBomber_TEX00000
+    400050: Stand_sep49_TieBomber_TEX00000
+    400052: Stand_sep50_TieBomber_TEX00000
+    400054: Stand_sep51_TieBomber_TEX00000
+    400056: Stand_sep52_TieBomber_TEX00000
+    400058: Stand_sep53_TieBomber_TEX00000
+    400060: Stand_sep54_TieBomber_TEX00000
+    400062: Stand_sep55_TieBomber_TEX00000
+    400064: Stand_sep56_TieBomber_TEX00000
+    400066: Stand_sep57_TieBomber_TEX00000
+    400068: Stand_sep58_TieBomber_TEX00000
+    400070: Stand_sep59_TieBomber_TEX00000
+    400072: Stand_sep60_TieBomber_TEX00000
+    400074: Stand_sep61_TieBomber_TEX00000
+    400076: Stand_sep62_TieBomber_TEX00000
+    400078: Stand_sep63_TieBomber_TEX00000
+    400080: Stand_sep64_TieBomber_TEX00000
+    400082: Stand_sep65_TieBomber_TEX00000
+    400084: Stand_sep66_TieBomber_TEX00000
+    400086: Stand_sep67_TieBomber_TEX00000
+    400088: Stand_sep68_TieBomber_TEX00000
+    400090: Stand_sep69_TieBomber_TEX00000
+    400092: Stand_sep70_TieBomber_TEX00000
+    400094: Stand_sep71_TieBomber_TEX00000
+    400096: Stand_sep72_TieBomber_TEX00000
+    400098: Stand_sep73_TieBomber_TEX00000
+    400100: Stand_sep74_TieBomber_TEX00000
+    400102: Stand_sep75_TieBomber_TEX00000
+    400104: Stand_sep76_TieBomber_TEX00000
+    400106: Stand_sep77_TieBomber_TEX00000
+    400108: Stand_sep78_TieBomber_TEX00000
+    400110: Stand_sep79_TieBomber_TEX00000
+    400112: Stand_sep80_TieBomber_TEX00000
+    400114: Stand_sep81_TieBomber_TEX00000
+    400116: Stand_sep82_TieBomber_TEX00000
+    400118: Stand_sep83_TieBomber_TEX00000
+    400120: Stand_sep84_TieBomber_TEX00000
+    400122: Stand_sep85_TieBomber_TEX00000
+    400124: Stand_sep86_TieBomber_TEX00000
+    400126: Stand_sep87_TieBomber_TEX00000
+    400128: Stand_TieBomber_TEX00000
+    400130: //RootNode
+    2300000: small_base_Cube.002_TieBomber_TEX00000
+    2300002: Stand_sep19_TieBomber_TEX00000
+    2300004: Stand_sep20_TieBomber_TEX00000
+    2300006: Stand_sep21_TieBomber_TEX00000
+    2300008: Stand_sep22_TieBomber_TEX00000
+    2300010: Stand_sep23_TieBomber_TEX00000
+    2300012: Stand_sep24_TieBomber_TEX00000
+    2300014: Stand_sep25_TieBomber_TEX00000
+    2300016: Stand_sep26_TieBomber_TEX00000
+    2300018: Stand_sep27_TieBomber_TEX00000
+    2300020: Stand_sep31_TieBomber_TEX00000
+    2300022: Stand_sep35_TieBomber_TEX00000
+    2300024: Stand_sep36_TieBomber_TEX00000
+    2300026: Stand_sep37_TieBomber_TEX00000
+    2300028: Stand_sep38_TieBomber_TEX00000
+    2300030: Stand_sep39_TieBomber_TEX00000
+    2300032: Stand_sep40_TieBomber_TEX00000
+    2300034: Stand_sep41_TieBomber_TEX00000
+    2300036: Stand_sep42_TieBomber_TEX00000
+    2300038: Stand_sep43_TieBomber_TEX00000
+    2300040: Stand_sep44_TieBomber_TEX00000
+    2300042: Stand_sep45_TieBomber_TEX00000
+    2300044: Stand_sep46_TieBomber_TEX00000
+    2300046: Stand_sep47_TieBomber_TEX00000
+    2300048: Stand_sep48_TieBomber_TEX00000
+    2300050: Stand_sep49_TieBomber_TEX00000
+    2300052: Stand_sep50_TieBomber_TEX00000
+    2300054: Stand_sep51_TieBomber_TEX00000
+    2300056: Stand_sep52_TieBomber_TEX00000
+    2300058: Stand_sep53_TieBomber_TEX00000
+    2300060: Stand_sep54_TieBomber_TEX00000
+    2300062: Stand_sep55_TieBomber_TEX00000
+    2300064: Stand_sep56_TieBomber_TEX00000
+    2300066: Stand_sep57_TieBomber_TEX00000
+    2300068: Stand_sep58_TieBomber_TEX00000
+    2300070: Stand_sep59_TieBomber_TEX00000
+    2300072: Stand_sep60_TieBomber_TEX00000
+    2300074: Stand_sep61_TieBomber_TEX00000
+    2300076: Stand_sep62_TieBomber_TEX00000
+    2300078: Stand_sep63_TieBomber_TEX00000
+    2300080: Stand_sep64_TieBomber_TEX00000
+    2300082: Stand_sep65_TieBomber_TEX00000
+    2300084: Stand_sep66_TieBomber_TEX00000
+    2300086: Stand_sep67_TieBomber_TEX00000
+    2300088: Stand_sep68_TieBomber_TEX00000
+    2300090: Stand_sep69_TieBomber_TEX00000
+    2300092: Stand_sep70_TieBomber_TEX00000
+    2300094: Stand_sep71_TieBomber_TEX00000
+    2300096: Stand_sep72_TieBomber_TEX00000
+    2300098: Stand_sep73_TieBomber_TEX00000
+    2300100: Stand_sep74_TieBomber_TEX00000
+    2300102: Stand_sep75_TieBomber_TEX00000
+    2300104: Stand_sep76_TieBomber_TEX00000
+    2300106: Stand_sep77_TieBomber_TEX00000
+    2300108: Stand_sep78_TieBomber_TEX00000
+    2300110: Stand_sep79_TieBomber_TEX00000
+    2300112: Stand_sep80_TieBomber_TEX00000
+    2300114: Stand_sep81_TieBomber_TEX00000
+    2300116: Stand_sep82_TieBomber_TEX00000
+    2300118: Stand_sep83_TieBomber_TEX00000
+    2300120: Stand_sep84_TieBomber_TEX00000
+    2300122: Stand_sep85_TieBomber_TEX00000
+    2300124: Stand_sep86_TieBomber_TEX00000
+    2300126: Stand_sep87_TieBomber_TEX00000
+    2300128: Stand_TieBomber_TEX00000
+    3300000: small_base_Cube.002_TieBomber_TEX00000
+    3300002: Stand_sep19_TieBomber_TEX00000
+    3300004: Stand_sep20_TieBomber_TEX00000
+    3300006: Stand_sep21_TieBomber_TEX00000
+    3300008: Stand_sep22_TieBomber_TEX00000
+    3300010: Stand_sep23_TieBomber_TEX00000
+    3300012: Stand_sep24_TieBomber_TEX00000
+    3300014: Stand_sep25_TieBomber_TEX00000
+    3300016: Stand_sep26_TieBomber_TEX00000
+    3300018: Stand_sep27_TieBomber_TEX00000
+    3300020: Stand_sep31_TieBomber_TEX00000
+    3300022: Stand_sep35_TieBomber_TEX00000
+    3300024: Stand_sep36_TieBomber_TEX00000
+    3300026: Stand_sep37_TieBomber_TEX00000
+    3300028: Stand_sep38_TieBomber_TEX00000
+    3300030: Stand_sep39_TieBomber_TEX00000
+    3300032: Stand_sep40_TieBomber_TEX00000
+    3300034: Stand_sep41_TieBomber_TEX00000
+    3300036: Stand_sep42_TieBomber_TEX00000
+    3300038: Stand_sep43_TieBomber_TEX00000
+    3300040: Stand_sep44_TieBomber_TEX00000
+    3300042: Stand_sep45_TieBomber_TEX00000
+    3300044: Stand_sep46_TieBomber_TEX00000
+    3300046: Stand_sep47_TieBomber_TEX00000
+    3300048: Stand_sep48_TieBomber_TEX00000
+    3300050: Stand_sep49_TieBomber_TEX00000
+    3300052: Stand_sep50_TieBomber_TEX00000
+    3300054: Stand_sep51_TieBomber_TEX00000
+    3300056: Stand_sep52_TieBomber_TEX00000
+    3300058: Stand_sep53_TieBomber_TEX00000
+    3300060: Stand_sep54_TieBomber_TEX00000
+    3300062: Stand_sep55_TieBomber_TEX00000
+    3300064: Stand_sep56_TieBomber_TEX00000
+    3300066: Stand_sep57_TieBomber_TEX00000
+    3300068: Stand_sep58_TieBomber_TEX00000
+    3300070: Stand_sep59_TieBomber_TEX00000
+    3300072: Stand_sep60_TieBomber_TEX00000
+    3300074: Stand_sep61_TieBomber_TEX00000
+    3300076: Stand_sep62_TieBomber_TEX00000
+    3300078: Stand_sep63_TieBomber_TEX00000
+    3300080: Stand_sep64_TieBomber_TEX00000
+    3300082: Stand_sep65_TieBomber_TEX00000
+    3300084: Stand_sep66_TieBomber_TEX00000
+    3300086: Stand_sep67_TieBomber_TEX00000
+    3300088: Stand_sep68_TieBomber_TEX00000
+    3300090: Stand_sep69_TieBomber_TEX00000
+    3300092: Stand_sep70_TieBomber_TEX00000
+    3300094: Stand_sep71_TieBomber_TEX00000
+    3300096: Stand_sep72_TieBomber_TEX00000
+    3300098: Stand_sep73_TieBomber_TEX00000
+    3300100: Stand_sep74_TieBomber_TEX00000
+    3300102: Stand_sep75_TieBomber_TEX00000
+    3300104: Stand_sep76_TieBomber_TEX00000
+    3300106: Stand_sep77_TieBomber_TEX00000
+    3300108: Stand_sep78_TieBomber_TEX00000
+    3300110: Stand_sep79_TieBomber_TEX00000
+    3300112: Stand_sep80_TieBomber_TEX00000
+    3300114: Stand_sep81_TieBomber_TEX00000
+    3300116: Stand_sep82_TieBomber_TEX00000
+    3300118: Stand_sep83_TieBomber_TEX00000
+    3300120: Stand_sep84_TieBomber_TEX00000
+    3300122: Stand_sep85_TieBomber_TEX00000
+    3300124: Stand_sep86_TieBomber_TEX00000
+    3300126: Stand_sep87_TieBomber_TEX00000
+    3300128: Stand_TieBomber_TEX00000
+    4300000: small_base_Cube.002_TieBomber_TEX00000
+    4300002: Stand_sep19_TieBomber_TEX00000
+    4300004: Stand_sep20_TieBomber_TEX00000
+    4300006: Stand_sep21_TieBomber_TEX00000
+    4300008: Stand_sep22_TieBomber_TEX00000
+    4300010: Stand_sep23_TieBomber_TEX00000
+    4300012: Stand_sep24_TieBomber_TEX00000
+    4300014: Stand_sep25_TieBomber_TEX00000
+    4300016: Stand_sep26_TieBomber_TEX00000
+    4300018: Stand_sep27_TieBomber_TEX00000
+    4300020: Stand_sep31_TieBomber_TEX00000
+    4300022: Stand_sep35_TieBomber_TEX00000
+    4300024: Stand_sep36_TieBomber_TEX00000
+    4300026: Stand_sep37_TieBomber_TEX00000
+    4300028: Stand_sep38_TieBomber_TEX00000
+    4300030: Stand_sep39_TieBomber_TEX00000
+    4300032: Stand_sep40_TieBomber_TEX00000
+    4300034: Stand_sep41_TieBomber_TEX00000
+    4300036: Stand_sep42_TieBomber_TEX00000
+    4300038: Stand_sep43_TieBomber_TEX00000
+    4300040: Stand_sep44_TieBomber_TEX00000
+    4300042: Stand_sep45_TieBomber_TEX00000
+    4300044: Stand_sep46_TieBomber_TEX00000
+    4300046: Stand_sep47_TieBomber_TEX00000
+    4300048: Stand_sep48_TieBomber_TEX00000
+    4300050: Stand_sep49_TieBomber_TEX00000
+    4300052: Stand_sep50_TieBomber_TEX00000
+    4300054: Stand_sep51_TieBomber_TEX00000
+    4300056: Stand_sep52_TieBomber_TEX00000
+    4300058: Stand_sep53_TieBomber_TEX00000
+    4300060: Stand_sep54_TieBomber_TEX00000
+    4300062: Stand_sep55_TieBomber_TEX00000
+    4300064: Stand_sep56_TieBomber_TEX00000
+    4300066: Stand_sep57_TieBomber_TEX00000
+    4300068: Stand_sep58_TieBomber_TEX00000
+    4300070: Stand_sep59_TieBomber_TEX00000
+    4300072: Stand_sep60_TieBomber_TEX00000
+    4300074: Stand_sep61_TieBomber_TEX00000
+    4300076: Stand_sep62_TieBomber_TEX00000
+    4300078: Stand_sep63_TieBomber_TEX00000
+    4300080: Stand_sep64_TieBomber_TEX00000
+    4300082: Stand_sep65_TieBomber_TEX00000
+    4300084: Stand_sep66_TieBomber_TEX00000
+    4300086: Stand_sep67_TieBomber_TEX00000
+    4300088: Stand_sep68_TieBomber_TEX00000
+    4300090: Stand_sep69_TieBomber_TEX00000
+    4300092: Stand_sep70_TieBomber_TEX00000
+    4300094: Stand_sep71_TieBomber_TEX00000
+    4300096: Stand_sep72_TieBomber_TEX00000
+    4300098: Stand_sep73_TieBomber_TEX00000
+    4300100: Stand_sep74_TieBomber_TEX00000
+    4300102: Stand_sep75_TieBomber_TEX00000
+    4300104: Stand_sep76_TieBomber_TEX00000
+    4300106: Stand_sep77_TieBomber_TEX00000
+    4300108: Stand_sep78_TieBomber_TEX00000
+    4300110: Stand_sep79_TieBomber_TEX00000
+    4300112: Stand_sep80_TieBomber_TEX00000
+    4300114: Stand_sep81_TieBomber_TEX00000
+    4300116: Stand_sep82_TieBomber_TEX00000
+    4300118: Stand_sep83_TieBomber_TEX00000
+    4300120: Stand_sep84_TieBomber_TEX00000
+    4300122: Stand_sep85_TieBomber_TEX00000
+    4300124: Stand_sep86_TieBomber_TEX00000
+    4300126: Stand_sep87_TieBomber_TEX00000
+    4300128: Stand_TieBomber_TEX00000
+    2186277476908879412: ImportLogs
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: a4e507db4ca4485419ab29fcff822e62, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep19_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 32dc2131e717afb40a67fc6bbcf1aa7b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep20_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 39d1cb75f1d59534a822316e242c373f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep21_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 456f29422ca0d9b4caaad0e15fe8c6b4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep22_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 71c93b16bc46f7f40bf9c9f773dab3e2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep23_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 64d1cf8c5a0bf2a45a9e42a41e23c5be, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep24_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 79e80e5fcf39ba448a52416a1e659fca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep25_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 5c3980b0a1dd9794798e7a0e28e1e268, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep26_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: cbe87a5b28a6bea4d97c20d2dcb9e9b5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep27_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 78c4919300ccb144292321ecc8d0e2a3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep31_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: db3450c70e7244b4ba56583a0afe447a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep35_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 237031c9157bd5447ae94bc9fbe6a7a8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep36_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: d9a9062e79fc80941bad8b2df1598a8e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep37_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 1c7eacb3a63a2214296f29e25d910cef, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep38_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 22a183e9ac8ddf44798f8c53714eab83, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep39_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 1a08bac0a8b515547b202981f84a37ea, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep40_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 1704f03e82286314d80d380ec81a4873, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep41_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: ea35f4e6b48b26f44bf9b12d5c8e1b24, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep42_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 9f70965392459d844992cb17589ccb50, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep43_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 2cd1deecbed0a3b40965b5df8ed399b6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep44_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 4bdab3f74db9c5848b2048db35fbe8a5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep45_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 6cd9a4bb6f807ef439d2bea4f41cc8a4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep46_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 57de47a7fbda14f41a8ea9c8ebce8919, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep47_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: c330c3c2ade62ce45a969096c763b302, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep48_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: c7475f124db893c4bb1d19abf0e46918, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep49_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 0fd200c797887d74e89a21e190cfb4cb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep50_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 88fb165eff5c0fd4bbd037e3574944ba, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep51_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 6805efe42842ca945a93d1d9986a7e8f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep52_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 8dd8fa394391ae3429f6272948a53610, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep53_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: a9668ca0a241a544e924b344c91ce996, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep54_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 8e8940aec5c0e714fbe60504d761357f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep55_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: b954af5d713a2a04c856cca774482719, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep56_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: f888af43e8c90d54bad9297345152fdb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep57_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 495007d633f48b249a03a7a7ba2fdd1f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep58_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: da0cd3c01131be640acea74f801d76a7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep59_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 6f0c7e5a24332994791a2126a484d4a8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep60_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 8f9f84895aa39b44f8be4c56b8af71b2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep61_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: b6c8205334e2fb944a4f9b8c8e8b4d7e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep62_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 8b145d72d70031e409954cfed1b83594, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep63_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: e6c43017986adbf48888ed4ce5669741, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep64_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 3f92f60420d7f33488b7186bbdee3f58, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep65_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 90ad0b0ecd7b3c649955faa79172bfc9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep66_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 2099c1bbfb0a7c9478ae3f3efae7d5a0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep67_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 0d34f4cb78e9bd04c9bcbe0665c6b94c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep68_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 0aebcbe1fe9d7824e80d13bdb3f790b5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep69_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 395be6dae4c96ee48abc943202087619, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep70_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 2c01a9a8926acd94894d2eb06261df9e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep71_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 09efbe96279820048a368f1a5140eaf7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep72_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: fb991222e9d4c23469dc70683b6d899e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep73_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: e545077d449289a44bae0aff1341afc1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep74_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 03e71416e033e53459afe11fbc706db2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep75_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 4302afd15275da0439afaf605b888c99, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep76_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: f1c845633de89744d958aa20e18eb421, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep77_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 285e8ecb2b8f35f4b87c023ac09ca24a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep78_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: b325648b3a60a1c4ab9516dfc41a84cf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep79_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: e240a899a5a965446a4f50c0d154602d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep80_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: a481a84c42f78924a9c6ab7cd948d04f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep81_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 3ac5adc23b7ea5f4289cb717fb1a3308, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep82_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 5ff5571125e65664b8ebfb5d6336c5a9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep83_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 57d413824d3f03e43af5db7537189e45, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep84_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 12ab6f70325cb844ba090e9e6d6a289a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep85_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 45e779e807fbb584da255e1d4dc18ae0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep86_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 6fd8e7f26fd287b43b57c6b81f8b6500, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stand_sep87_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 5000366cc998c7548b84e370f808d2ea, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: small_base_Cube.002_TieBomber_TEX00000Mat
+    second: {fileID: 2100000, guid: 18562979a346bde419ddfa2d9c2a7986, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,52 @@
+﻿using Arcs;
+using Ship;
+using Upgrade;
+
+namespace Ship
+{
+    namespace SecondEdition.TIESfFighter
+    {
+        public class Backdraft : TIESfFighter
+        {
+            public Backdraft() : base()
+            {
+                PilotInfo = new PilotCardInfo(
+                    "\"Backdraft\"",
+                    4,
+                    36,
+                    isLimited: true,
+                    extraUpgradeIcon: UpgradeType.Talent,
+                    abilityType: typeof(Abilities.SecondEdition.BackdraftAbility)
+                );
+            }
+        }
+    }
+}
+
+namespace Abilities.SecondEdition
+{
+    public class BackdraftAbility : GenericAbility
+    {
+        public override void ActivateAbility()
+        {
+            HostShip.AfterGotNumberOfAttackDice += CheckBackdraftAbility;
+        }
+
+        public override void DeactivateAbility()
+        {
+            HostShip.AfterGotNumberOfAttackDice -= CheckBackdraftAbility;
+        }
+
+        private void CheckBackdraftAbility(ref int count)
+        {
+            if (Combat.ChosenWeapon.WeaponType == WeaponTypes.PrimaryWeapon && Combat.ChosenWeapon.WeaponInfo.ArcRestrictions.Contains(ArcType.SingleTurret))
+            {
+                if (HostShip.SectorsInfo.IsShipInSector(Combat.Defender, ArcType.Rear))
+                {
+                    Messages.ShowInfo(HostShip.PilotInfo.PilotName + " gains +1 attack die");
+                    count++;
+                }
+            }
+        }
+    }
+}

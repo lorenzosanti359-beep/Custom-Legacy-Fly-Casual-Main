@@ -1,0 +1,66 @@
+﻿using Upgrade;
+using System.Collections.Generic;
+using System.Linq;
+using Actions;
+using ActionsList;
+using Tokens;
+using Ship;
+
+namespace UpgradesList.SecondEdition
+{
+    public class SnapShot : GenericSpecialWeapon, IVariableCost
+    {
+        public SnapShot() : base()
+        {
+            UpgradeInfo = new UpgradeCardInfo(
+                "SnapShot",
+                UpgradeType.Talent,
+                cost: 7,
+                weaponInfo: new SpecialWeaponInfo(
+                    attackValue: 2,
+                    minRange: 2,
+                    maxRange: 2,
+                    noRangeBonus: true
+                ),
+                abilityType: typeof(Abilities.SecondEdition.SnapShotAbility)
+            );
+        }
+
+        public void UpdateCost(GenericShip ship)
+        {
+            Dictionary<BaseSize, int> sizeToCost = new Dictionary<BaseSize, int>()
+            {
+                {BaseSize.Small, 6},
+                {BaseSize.Medium, 7},
+                {BaseSize.Large, 8},
+            };
+
+            UpgradeInfo.Cost = sizeToCost[ship.ShipInfo.BaseSize];
+        }
+    }
+}
+
+namespace Abilities.SecondEdition
+{
+    public class SnapShotAbility : Abilities.FirstEdition.SnapShotAbility
+    {
+        protected override void EnableWeaponRange()
+        {
+            // Do nothing
+        }
+
+        protected override void DisableWeaponRange()
+        {
+            // Do nothing
+        }
+
+        protected override void SnapShotRestrictionForDefender(GenericShip ship, GenericAction action, ref bool canBeUsed)
+        {
+            if (action.DiceModificationTiming == DiceModificationTimingType.Opposite)
+            {
+                Messages.ShowErrorToHuman("Snap Shot: You cannot modify attacker's attack dice");
+                canBeUsed = false;
+            }
+        }
+    }
+}

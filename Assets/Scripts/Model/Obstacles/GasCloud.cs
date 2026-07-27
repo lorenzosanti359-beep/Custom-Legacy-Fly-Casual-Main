@@ -1,0 +1,138 @@
+﻿using Obstacles;
+using Ship;
+using SubPhases;
+using System;
+using Tokens;
+
+namespace Obstacles
+{
+    public class GasCloud : GenericObstacle
+    {
+        public GasCloud(string name, string shortName) : base(name, shortName)
+        {
+            
+        }
+
+        public override string GetTypeName => "Gas Cloud";
+
+        public override void OnHit(GenericShip ship)
+        {
+            if (!Selection.ThisShip.CanPerformActionsWhenOverlapping
+                && Editions.Edition.Current.RuleSet.GetType() == typeof(Editions.RuleSets.RuleSet20))
+            {
+                Messages.ShowErrorToHuman(ship.PilotInfo.PilotName + " hit a gas cloud during movement, their action subphase is skipped");
+                Selection.ThisShip.IsSkipsActionSubPhase = true;
+            }
+
+            if (Editions.Edition.Current.RuleSet.GetType() == typeof(Editions.RuleSets.RuleSet25))
+            {
+                BreakAllLocks(ship, ()=> StartToRoll(ship));
+            }
+            else
+            {
+                StartToRoll(ship);
+            }
+        }
+
+        private void BreakAllLocks(GenericShip ship, Action callback)
+        {
+            ship.Tokens.RemoveAllTokensByType(typeof(Tokens.BlueTargetLockToken), () => GetStrain(ship, callback));
+        }
+
+        private void GetStrain(GenericShip ship, Action callback)
+        {
+            Messages.ShowErrorToHuman($"{ship.PilotInfo.PilotName} hit a gas cloud during movement and gained a Strain token");
+
+            ship.Tokens.AssignToken(typeof(StrainToken), delegate { ship.CallOnRedTokenGainedFromOverlappingObstacle(ship.Tokens.GetToken(typeof(Tokens.StrainToken)), callback); });
+        }
+
+        private void StartToRoll(GenericShip ship)
+        {
+            Messages.ShowErrorToHuman(ship.PilotInfo.PilotName + " hit a gas cloud during movement, rolling for effect");
+
+            GasCloudHitCheckSubPhase newPhase = (GasCloudHitCheckSubPhase)Phases.StartTemporarySubPhaseNew(
+                "Strain from gas cloud collision",
+                typeof(GasCloudHitCheckSubPhase),
+                delegate
+                {
+                    Phases.FinishSubPhase(typeof(GasCloudHitCheckSubPhase));
+                    Triggers.FinishTrigger();
+                });
+            newPhase.TheShip = ship;
+            newPhase.TheObstacle = this;
+            newPhase.Start();
+        }
+
+        public override void AfterObstacleRoll(GenericShip ship, DieSide side, Action callback)
+        {
+            if (Editions.Edition.Current.RuleSet.GetType() == typeof(Editions.RuleSets.RuleSet20))
+            {
+                if (side == DieSide.Focus || side == DieSide.Success)
+                {
+                    Messages.ShowErrorToHuman($"{ship.PilotInfo.PilotName} gains a Strain token");
+                    ship.Tokens.AssignToken(typeof(StrainToken), delegate { ship.CallOnRedTokenGainedFromOverlappingObstacle(ship.Tokens.GetToken(typeof(Tokens.StrainToken)), callback); });
+                }
+                else
+                {
+                    Messages.ShowInfoToHuman("No effect");
+                    callback();
+                }
+            }
+            else if (Editions.Edition.Current.RuleSet.GetType() == typeof(Editions.RuleSets.RuleSet25))
+            {
+                if (side == DieSide.Crit)
+                {
+                    Messages.ShowErrorToHuman($"{ship.PilotInfo.PilotName} gains 3 Ion tokens");
+                    ship.Tokens.AssignTokens(() => CreateIonToken(ship), 3, callback);
+                }
+                else if (side == DieSide.Success)
+                {
+                    Messages.ShowErrorToHuman($"{ship.PilotInfo.PilotName} gains 1 Ion token");
+                    ship.Tokens.AssignToken(typeof(Tokens.IonToken), callback);
+                }
+                else
+                {
+                    Messages.ShowInfoToHuman("No effect");
+                    callback();
+                }
+            }
+        }
+
+        private GenericToken CreateIonToken(GenericShip ship)
+        {
+            return new IonToken(ship);
+        }
+
+        public override void OnShotObstructedExtra(GenericShip attacker, GenericShip defender, ref int result)
+        {
+            
+        }
+    }
+}
+
+namespace SubPhases
+{
+
+    public class GasCloudHitCheckSubPhase : DiceRollCheckSubPhase
+    {
+        private GenericShip prevActiveShip = Selection.ActiveShip;
+        public GenericObstacle TheObstacle { get; set; }
+
+        public override void Prepare()
+        {
+            DiceKind = DiceKind.Attack;
+            DiceCount = 1;
+
+            AfterRoll = FinishAction;
+            Selection.ActiveShip = TheShip;
+        }
+
+        protected override void FinishAction()
+        {
+            HideDiceResultMenu();
+            Selection.ActiveShip = prevActiveShip;
+
+            TheObstacle.AfterObstacleRoll(TheShip, CurrentDiceRoll.DiceList[0].Side, CallBack);
+        }
+    }
+}

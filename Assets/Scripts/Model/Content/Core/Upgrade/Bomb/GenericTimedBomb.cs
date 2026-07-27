@@ -1,0 +1,63 @@
+﻿using Bombs;
+using Ship;
+using System;
+using System.Collections.Generic;
+
+namespace Upgrade
+{
+
+    abstract public class GenericTimedBomb : GenericBomb
+    {
+        public GenericTimedBomb() : base()
+        {
+            detonationRange = 1;
+        }
+
+        public override void AttachToShip(GenericShip host)
+        {
+            base.AttachToShip(host);
+
+            Editions.Edition.Current.TimedBombActivationTime(host);
+        }
+
+        public override void ActivateBombs(List<GenericDeviceGameObject> bombObjects, Action callBack)
+        {
+            Phases.Events.OnActivationPhaseEnd_Triggers -= PlanTimedDetonation;
+            Phases.Events.OnActivationPhaseEnd_Triggers += PlanTimedDetonation;
+
+            CurrentBombObjects.AddRange(bombObjects);
+            base.ActivateBombs(bombObjects, callBack);
+        }
+
+        protected void PlanTimedDetonation()
+        {
+            foreach (var bombObject in CurrentBombObjects)
+            {
+                Triggers.RegisterTrigger(new Trigger()
+                {
+                    Name = "Detonation of " + UpgradeInfo.Name,
+                    TriggerType = TriggerTypes.OnActivationPhaseEnd,
+                    TriggerOwner = HostShip.Owner.PlayerNo,
+                    EventHandler = TryDetonate,
+                    EventArgs = new BombDetonationEventArgs()
+                    {
+                        BombObject = bombObject
+                    }
+                });
+            }
+        }
+
+        protected override void Detonate()
+        {
+            Phases.Events.OnActivationPhaseEnd_Triggers -= PlanTimedDetonation;
+            foreach (var ship in BombsManager.GetShipsInRange(BombsManager.CurrentBombObject))
+            {
+                RegisterDetonationTriggerForShip(ship);
+            }
+        
+            base.Detonate();
+        }
+
+    }
+
+}

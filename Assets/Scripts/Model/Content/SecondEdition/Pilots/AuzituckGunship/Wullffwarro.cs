@@ -1,0 +1,53 @@
+﻿using Content;
+using System.Collections.Generic;
+using Upgrade;
+
+namespace Ship
+{
+    namespace SecondEdition.AuzituckGunship
+    {
+        public class Wullffwarro : AuzituckGunship
+        {
+            public Wullffwarro() : base()
+            {
+                PilotInfo = new PilotCardInfo(
+                    "Wullffwarro",
+                    4,
+                    54,
+                    isLimited: true,
+                    abilityType: typeof(Abilities.SecondEdition.WullffwarroAbility),
+                    tags: new List<Tags>
+                    {
+                        Tags.Wookie,
+                    },
+                    extraUpgradeIcon: UpgradeType.Talent
+                );
+            }
+        }
+    }
+}
+
+namespace Abilities.SecondEdition
+{
+    public class WullffwarroAbility : GenericAbility
+    {
+        public override void ActivateAbility()
+        {
+            HostShip.AfterGotNumberOfPrimaryWeaponAttackDice += CheckWullffwarroAbility;
+        }
+
+        public override void DeactivateAbility()
+        {
+            HostShip.AfterGotNumberOfPrimaryWeaponAttackDice -= CheckWullffwarroAbility;
+        }
+
+        private void CheckWullffwarroAbility(ref int value)
+        {
+            if (HostShip.Damage.IsDamaged)
+            {
+                Messages.ShowInfo(HostShip.PilotInfo.PilotName + " is damaged, gains +1 attack die");
+                value++;
+            }
+        }
+    }
+}
