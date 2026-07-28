@@ -9,7 +9,6 @@ Thanks:
 * Jim Bob of Infinite Arenas who provided the tools I used to make all the custom cards for this
 
 Links:
-* [Download](https://github.com/sampson-matt/FlyCasual/releases)
 * [X-Wing Legacy](https://x2po.org/)
 * [Custom HotAC Upgrade Cards](https://github.com/sampson-matt/Hotac-Upgrade-Cards)
 * [Custom AMG Scenario Pilot Cards](https://github.com/sampson-matt/FlyCasualLegacyCustomCards)
