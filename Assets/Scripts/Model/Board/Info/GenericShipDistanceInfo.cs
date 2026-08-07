@@ -67,6 +67,14 @@ namespace BoardTools
             Ship1 = ship1;
             Ship2 = ship2;
         }
+                protected void ResetBaseDistances()
+        {
+            MinDistance = null;
+            altDistance1 = null;
+            altDistance2 = null;
+            minDistancePerpA = null;
+            minDistancePerpB = null;
+        }
 
         protected void FindNearestDistances(List<Vector3> firstShipEdges)
         {

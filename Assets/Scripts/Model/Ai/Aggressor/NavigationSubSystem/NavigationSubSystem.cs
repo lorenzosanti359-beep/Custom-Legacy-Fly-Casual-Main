@@ -374,61 +374,133 @@ namespace AI.Aggressor
             }
         }
 
-        private static void ProcessHeavyGeometryCalculations(GenericShip ship, out float minDistanceToEnemyShip, out float minDistanceToNearestEnemyInShotRange, out float minAngle, out int enemiesInShotRange, out int enemiesTargetingThisShip)
+         private static void ProcessHeavyGeometryCalculations(GenericShip ship, out float minDistanceToEnemyShip, out float minDistanceToNearestEnemyInShotRange, out float minAngle, out int enemiesInShotRange, out int enemiesTargetingThisShip)
+{
+    // Inizializza output
+    minDistanceToEnemyShip = float.MaxValue;
+    minDistanceToNearestEnemyInShotRange = 0;
+    minAngle = float.MaxValue;
+    enemiesInShotRange = 0;
+    enemiesTargetingThisShip = 0;
+
+    // CONTROLLO 1: ship deve essere valido
+    if (ship == null)
+    {
+        Debug.LogError("[NavigationSubSystem] ProcessHeavyGeometryCalculations: ship is null!");
+        return;
+    }
+
+    // CONTROLLO 2: ship deve avere armi primarie
+    if (ship.PrimaryWeapons == null || !ship.PrimaryWeapons.Any())
+    {
+        string shipName = (ship.PilotInfo != null) ? ship.PilotInfo.PilotName : "Unknown";
+        Debug.LogWarning($"[NavigationSubSystem] Ship '{shipName}' has no primary weapons! Skipping geometry calculations.");
+        return;
+    }
+
+    // CONTROLLO 3: ship deve avere un owner valido
+    if (ship.Owner == null || ship.Owner.EnemyShips == null)
+    {
+        Debug.LogError($"[NavigationSubSystem] Ship '{ship.PilotInfo?.PilotName}' has no valid owner or enemy ships list!");
+        return;
+    }
+
+    List<GenericShip> potentialTargets = ship.Owner.EnemyShips.Values.ToList();
+    if (ship.StrikeTargets != null && ship.StrikeTargets.Count > 0)
+    {
+        potentialTargets = ship.StrikeTargets.Values.ToList();
+    }
+
+    // CONTROLLO 4: deve esserci almeno un bersaglio potenziale
+    if (potentialTargets == null || potentialTargets.Count == 0)
+    {
+        Debug.LogWarning($"[NavigationSubSystem] Ship '{ship.PilotInfo?.PilotName}' has no potential targets!");
+        return;
+    }
+
+    foreach (GenericShip enemyShip in potentialTargets)
+    {
+        // CONTROLLO 5: enemyShip deve essere valido
+        if (enemyShip == null)
         {
-            minDistanceToEnemyShip = float.MaxValue;
-            minDistanceToNearestEnemyInShotRange = 0;
-            minAngle = float.MaxValue;
-            enemiesInShotRange = 0;
-            enemiesTargetingThisShip = 0;
-            ShotInfo enemyCanShootThisShip = null;
-            List<GenericShip> potentialTargets = ship.Owner.EnemyShips.Values.ToList();
-            if (ship.StrikeTargets != null && ship.StrikeTargets.Count > 0)
+            Debug.LogWarning("[NavigationSubSystem] Found null enemy ship in potential targets! Skipping.");
+            continue;
+        }
+
+        // CONTROLLO 6: enemyShip deve avere armi primarie
+        if (enemyShip.PrimaryWeapons == null || !enemyShip.PrimaryWeapons.Any())
+        {
+            string enemyName = (enemyShip.PilotInfo != null) ? enemyShip.PilotInfo.PilotName : "Unknown";
+            Debug.LogWarning($"[NavigationSubSystem] Enemy ship '{enemyName}' has no primary weapons! Skipping this target.");
+            continue;
+        }
+
+        // OTTIMIZZAZIONE: Uso del Pool con try/finally per garantire il rilascio
+        DistanceInfo distInfo = null;
+        ShotInfo shotInfo = null;
+        ShotInfo shotInfoEnemy = null;
+
+        try
+        {
+            distInfo = DistanceInfoPool.Get(ship, enemyShip);
+            shotInfo = ShotInfoPool.Get(ship, enemyShip, ship.PrimaryWeapons.First());
+            shotInfoEnemy = ShotInfoPool.Get(enemyShip, ship, enemyShip.PrimaryWeapons.First());
+
+            // CONTROLLO 7: verifica che i pool abbiano restituito oggetti validi
+            if (distInfo == null || shotInfo == null || shotInfoEnemy == null)
             {
-                potentialTargets = ship.StrikeTargets.Values.ToList();
+                Debug.LogError($"[NavigationSubSystem] Pool returned null object! ship={ship.PilotInfo?.PilotName}, enemy={enemyShip.PilotInfo?.PilotName}");
+                continue;
             }
-            foreach (GenericShip enemyShip in potentialTargets)
+
+            if (distInfo.MinDistance != null && distInfo.MinDistance.DistanceReal < minDistanceToEnemyShip)
             {
-                DistanceInfo distInfo = new DistanceInfo(ship, enemyShip);
-                if (distInfo.MinDistance.DistanceReal < minDistanceToEnemyShip)
-                {
-                    minDistanceToEnemyShip = distInfo.MinDistance.DistanceReal;
-                }
+                minDistanceToEnemyShip = distInfo.MinDistance.DistanceReal;
+            }
 
-                ShotInfo shotInfo = new ShotInfo(ship, enemyShip, ship.PrimaryWeapons.First());
-                if (shotInfo.IsShotAvailable)
+            if (shotInfo.IsShotAvailable)
+            {
+                enemiesInShotRange++;
+                if (minDistanceToNearestEnemyInShotRange < shotInfo.DistanceReal)
                 {
-                    enemiesInShotRange++;
-
-                    if (minDistanceToNearestEnemyInShotRange < shotInfo.DistanceReal)
-                    {
-                        minDistanceToNearestEnemyInShotRange = shotInfo.DistanceReal;
-                    }
+                    minDistanceToNearestEnemyInShotRange = shotInfo.DistanceReal;
                 }
-                // See if this enemy can shoot us.
-                enemyCanShootThisShip = new ShotInfo(enemyShip, ship, enemyShip.PrimaryWeapons.First());
-                if (enemyCanShootThisShip.IsShotAvailable == true)
-                {
-                    enemiesTargetingThisShip++;
-                }
+            }
 
-                Vector3 forward = ship.GetFrontFacing();
-                Vector3 toEnemyShip = enemyShip.GetCenter() - ship.GetCenter();
-                float angle = Mathf.Abs(Vector3.SignedAngle(forward, toEnemyShip, Vector3.down));
-                if (angle < minAngle) minAngle = angle;
-
-                if (ship.IsFleeing)
-                {
-                    Vector3 escapeEdge = determineEscapeEdge(ship.EscapeEdge);
-                    float DistanceToEscapeEdge = Vector3.Distance(ship.GetPosition(), escapeEdge);
-                    minDistanceToEnemyShip = Vector3.Distance(ship.GetPosition(), escapeEdge);
-                    minDistanceToNearestEnemyInShotRange = Vector3.Distance(ship.GetPosition(), escapeEdge);
-                    toEnemyShip = escapeEdge - ship.GetCenter();
-                    minAngle = Mathf.Abs(Vector3.SignedAngle(forward, toEnemyShip, Vector3.down));
-                    enemiesInShotRange = 0;
-                }
+            if (shotInfoEnemy.IsShotAvailable == true)
+            {
+                enemiesTargetingThisShip++;
             }
         }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"[NavigationSubSystem] Exception during pool operations for ship '{ship.PilotInfo?.PilotName}' vs '{enemyShip.PilotInfo?.PilotName}': {ex.Message}\n{ex.StackTrace}");
+        }
+        finally
+        {
+            // Rilascio sicuro: controlla null prima di restituire al pool
+            if (distInfo != null) DistanceInfoPool.Return(distInfo);
+            if (shotInfo != null) ShotInfoPool.Return(shotInfo);
+            if (shotInfoEnemy != null) ShotInfoPool.Return(shotInfoEnemy);
+        }
+
+        Vector3 forward = ship.GetFrontFacing();
+        Vector3 toEnemyShip = enemyShip.GetCenter() - ship.GetCenter();
+        float angle = Mathf.Abs(Vector3.SignedAngle(forward, toEnemyShip, Vector3.down));
+        if (angle < minAngle) minAngle = angle;
+
+        if (ship.IsFleeing)
+        {
+            Vector3 escapeEdge = determineEscapeEdge(ship.EscapeEdge);
+            float DistanceToEscapeEdge = Vector3.Distance(ship.GetPosition(), escapeEdge);
+            minDistanceToEnemyShip = Vector3.Distance(ship.GetPosition(), escapeEdge);
+            minDistanceToNearestEnemyInShotRange = Vector3.Distance(ship.GetPosition(), escapeEdge);
+            toEnemyShip = escapeEdge - ship.GetCenter();
+            minAngle = Mathf.Abs(Vector3.SignedAngle(forward, toEnemyShip, Vector3.down));
+            enemiesInShotRange = 0;
+        }
+    }
+}
 
         private static void SetVirtualPositionsForShipsWithPreviousActivations(List<GenericShip> orderOfActivation)
         {
@@ -585,21 +657,52 @@ namespace AI.Aggressor
             Roster.ToggleCalculatingStatus(Phases.CurrentSubPhase.RequiredPlayer, false);
         }
 
-        private static float GetMinDistanceToEnemyShip(GenericShip ship)
-        {
-            float minDistanceToEnemyShip = float.MaxValue;
+          private static float GetMinDistanceToEnemyShip(GenericShip ship)
+{
+    if (ship == null)
+    {
+        Debug.LogError("[NavigationSubSystem] GetMinDistanceToEnemyShip: ship is null!");
+        return float.MaxValue;
+    }
 
-            foreach (GenericShip enemyShip in ship.Owner.EnemyShips.Values)
+    if (ship.Owner == null || ship.Owner.EnemyShips == null)
+    {
+        Debug.LogError($"[NavigationSubSystem] Ship '{ship.PilotInfo?.PilotName}' has no valid owner!");
+        return float.MaxValue;
+    }
+
+    float minDistanceToEnemyShip = float.MaxValue;
+    foreach (GenericShip enemyShip in ship.Owner.EnemyShips.Values)
+    {
+        if (enemyShip == null)
+        {
+            Debug.LogWarning("[NavigationSubSystem] Found null enemy ship! Skipping.");
+            continue;
+        }
+
+        DistanceInfo distInfo = null;
+        try
+        {
+            distInfo = DistanceInfoPool.Get(ship, enemyShip);
+            if (distInfo != null && distInfo.MinDistance != null)
             {
-                DistanceInfo distInfo = new DistanceInfo(ship, enemyShip);
                 if (distInfo.MinDistance.DistanceReal < minDistanceToEnemyShip)
                 {
                     minDistanceToEnemyShip = distInfo.MinDistance.DistanceReal;
                 }
             }
-
-            return minDistanceToEnemyShip;
         }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"[NavigationSubSystem] Exception in GetMinDistanceToEnemyShip: {ex.Message}");
+        }
+        finally
+        {
+            if (distInfo != null) DistanceInfoPool.Return(distInfo);
+        }
+    }
+    return minDistanceToEnemyShip;
+}
 
         private static bool IsActivationBeforeCurrentShip(GenericShip ship)
         {
