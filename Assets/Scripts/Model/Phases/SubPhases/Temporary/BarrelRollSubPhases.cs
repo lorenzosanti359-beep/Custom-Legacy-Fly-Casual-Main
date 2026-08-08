@@ -53,6 +53,14 @@ namespace SubPhases
         public Direction AiPreselectedShift     { get; set; } = Direction.None;
         // ─────────────────────────────────────────────────────────────────────────
 
+        // Se true, quando l'AI fallisce silenziosamente un Barrel Roll (nessun messaggio
+        // a schermo, vedi CancelBarrelRoll) logga comunque il motivo in console per lo
+        // sviluppatore. Il fallimento indica un disallineamento tra l'euristica di
+        // pre-validazione (NavigationSubSystem, AABB) e il controllo reale a collider
+        // (ObstaclesStayDetectorForced) eseguito qui: non è normale che accada se la
+        // pre-validazione funziona correttamente. Disattivare a debug concluso.
+        private const bool BR_LOG_AI_SILENT_FAILURES = true;
+
         public override List<GameCommandTypes> AllowedGameCommandTypes
         {
             get
@@ -483,7 +491,6 @@ namespace SubPhases
         protected virtual void CancelBarrelRoll()
         {
             DestroyTemporaryElements(isAll: true);
-            ShowInformationAboutProblems();
 
             // ── Pattern verificato su BoostAction/BoostPlanningSubPhase ────────────
             // Il codice di Boost (funzionante, incluso il fallimento AI) documenta
@@ -493,12 +500,28 @@ namespace SubPhases
             // this allows the AI to take a different action"). La soluzione adottata
             // lì è chiamare RevertActionOnFail() direttamente per l'AI, bypassando la
             // cascata di eventi. Replichiamo lo stesso pattern qui.
+            //
+            // FIX: ShowInformationAboutProblems() era chiamato incondizionatamente,
+            // anche per l'AI — mostrava a schermo un messaggio d'errore per un
+            // fallimento che l'AI gestisce silenziosamente (l'utente non ha mai fatto
+            // alcuna scelta interattiva a cui il messaggio si riferisse). È un residuo
+            // del percorso umano non escluso quando è stato aggiunto il bypass AI.
+            // Spostato nel solo ramo umano, dove il messaggio ha effettivamente senso.
             if (IsAiControlled)
             {
+                if (BR_LOG_AI_SILENT_FAILURES)
+                {
+                    string reasons = string.Join(", ", BarrelRollProblems);
+                    Debug.Log($"[BarrelRoll-AI] Fallimento silenzioso (nessun messaggio a schermo): " +
+                              $"nave ShipId={TheShip.ShipId}, motivi=[{reasons}]. La nave tenterà un'altra azione. " +
+                              $"Indica un possibile disallineamento tra la pre-validazione euristica " +
+                              $"(NavigationSubSystem) e il controllo reale a collider eseguito qui.");
+                }
                 HostAction.RevertActionOnFail(false);
             }
             else
             {
+                ShowInformationAboutProblems();
                 WhenCancelBarrelRollWithProblems(BarrelRollProblems);
             }
         }
