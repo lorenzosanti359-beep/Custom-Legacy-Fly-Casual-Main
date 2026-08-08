@@ -895,6 +895,50 @@ namespace AI.Aggressor
 
         // ── BARREL ROLL AI ──────────────────────────────────────────────────────────
 
+        // ── ESPERIMENTO ──────────────────────────────────────────────────────────
+        // Se true: TryBarrelRollPossibilities valuta baseline e candidati usando SOLO
+        // EdgePenalty + BullseyeObstaclePenalty, ignorando GetTacticalScoreFromCurrentPosition
+        // (che non viene nemmeno chiamato: nessun costo prestazionale aggiuntivo durante il test).
+        // Per ripristinare il comportamento originale (tactical score incluso), basta
+        // riportare questo flag a false: nessun'altra modifica necessaria.
+        //
+        // Effetto collaterale noto da tenere a mente durante il test: con il flag a true,
+        // EdgePenalty e BullseyeObstaclePenalty sono entrambi <= 0 (mai positivi), quindi
+        // totalScore per qualunque candidato è al massimo 0. Questo significa che il Barrel
+        // Roll verrà proposto SOLO come manovra difensiva (per allontanarsi da bordo/ostacolo
+        // bullseye), mai più come miglioramento tattico puro quando la nave parte già a
+        // penalità zero (in quel caso bestBrScore massimo = 0 = startingScore, e la condizione
+        // finale richiede un miglioramento stretto).
+        private const bool EXCLUDE_TACTICAL_SCORE_FROM_BR = true;
+
+        // Offset applicato SOLO quando EXCLUDE_TACTICAL_SCORE_FROM_BR è true, aggiunto in modo
+        // identico a startingScore e a ogni totalScore candidato. Non altera il confronto
+        // "bestBrScore > startingScore" (la costante si semplifica algebricamente), ma garantisce
+        // che, quando un piano viene registrato, la sua priorità sia sempre > 0.
+        // Necessario perché PerformActionFromList esegue un'azione SOLO se la sua priorità
+        // è > 0 (AggressorAiPlayer.cs: "if (prioritizedActions.Value > 0)") — con solo
+        // edge+bullseye (entrambi <= 0), senza questo offset totalScore non può mai superare
+        // quella soglia, anche quando il Barrel Roll è chiaramente la scelta migliore.
+        // Valore = 100 (max magnitudine EdgePenalty) + 60 (magnitudine BullseyeObstaclePenalty)
+        // = il minimo che garantisce matematicamente startingScore/totalScore >= 0 in ogni caso.
+        // ATTENZIONE (calibrazione, non correttezza): con questo offset la priorità di un
+        // Barrel Roll "d'emergenza" arriva fino a 160, sensibilmente sopra la scala tipica
+        // delle altre azioni (CalculateBoostPositionPriority raramente supera ~70-100). In
+        // pratica il Barrel Roll tenderà quasi sempre a vincere il confronto con le altre
+        // azioni quando scatta. Se in test risulta scelto anche per miglioramenti marginali,
+        // ricalibrare riducendo questo valore (sapendo che sotto 160 si riapre, in misura
+        // ridotta, lo stesso problema per i casi di doppia penalità massima).
+        private const int BR_ZERO_TACTICAL_OFFSET = 160;
+
+        // ── DEBUG TEMPORANEO ─────────────────────────────────────────────────────
+        // Se true, logga diagnostica dettagliata sul controllo bullseye: stato del
+        // toggle CollisionDetectionQuality, tag/isTrigger/bounds di ogni ostacolo
+        // piazzato, ed esito grezzo di Physics.OverlapBox (hit trovati e loro tag),
+        // a prescindere da cosa CompareTag("Obstacle") decida poi. Serve a distinguere
+        // "il check non trova l'ostacolo" da "lo trova ma lo scarta per il tag/altro".
+        // Disattivare (false) o rimuovere una volta risolto il dubbio.
+        private const bool DEBUG_BULLSEYE = true;
+
         // Manovre di scansione per libertà di movimento: velocità 1, solo basic bearings.
         // Usate per valutare quante opzioni sicure ha la nave dal turno successivo.
         private static readonly string[] ThreatScanKeys =
@@ -920,14 +964,45 @@ namespace AI.Aggressor
             CollisionDetectionQuality savedQuality = ObstaclesManager.CollisionDetectionQuality;
             ObstaclesManager.SetObstaclesCollisionDetectionQuality(CollisionDetectionQuality.Low);
 
+            if (DEBUG_BULLSEYE)
+            {
+                Debug.Log($"[BR-Bullseye-DEBUG] Quality dopo toggle: {ObstaclesManager.CollisionDetectionQuality}");
+                var placed = ObstaclesManager.GetPlacedObstacles();
+                string obstaclesSummary = string.Join(" | ", placed
+                    .Where(o => o.Collider != null)
+                    .Select(o => $"{o.Collider.gameObject.name}[tag={o.Collider.tag},trig={o.Collider.isTrigger},center={o.Collider.bounds.center},ext={o.Collider.bounds.extents}]"));
+                Debug.Log($"[BR-Bullseye-DEBUG] Ostacoli piazzati ({placed.Count}): {obstaclesSummary}");
+            }
+
             try
             {
-                // Baseline: quante manovre sicure abbiamo dalla posizione attuale (post-manovra)
-                int startingScore = GetTacticalScoreFromCurrentPosition(thisShip);
-                startingScore += GetEdgePenalty(thisShip.GetPosition());
-                startingScore += GetBullseyeObstaclePenalty(thisShip);
+                // Baseline: quante manovre sicure abbiamo dalla posizione attuale (post-manovra).
+                // La regola per includere/escludere il tactical score è la STESSA usata per i
+                // candidati più sotto (vedi EXCLUDE_TACTICAL_SCORE_FROM_BR): se fosse diversa,
+                // il confronto "bestBrScore > startingScore" sarebbe asimmetrico (la baseline
+                // manterrebbe un bonus fino a +75 che i candidati non avrebbero mai).
+                int startingTactical = EXCLUDE_TACTICAL_SCORE_FROM_BR
+                    ? 0
+                    : GetTacticalScoreFromCurrentPosition(thisShip);
+                int startingEdge     = GetEdgePenalty(thisShip.GetPosition());
+                int startingBullseye = GetBullseyeObstaclePenalty(thisShip);
+                int startingScore    = startingTactical + startingEdge + startingBullseye;
+                if (EXCLUDE_TACTICAL_SCORE_FROM_BR) startingScore += BR_ZERO_TACTICAL_OFFSET;
 
-                int bestBrScore = 0;
+                if (DEBUG_BULLSEYE)
+                {
+                    Debug.Log($"[BR-Bullseye-DEBUG] Baseline -> tactical={startingTactical} edge={startingEdge} " +
+                              $"bullseye={startingBullseye} totale={startingScore}");
+                }
+
+                // Fix: partiva da 0, il che impediva di selezionare qualunque candidato con
+                // punteggio negativo anche quando era comunque migliore della baseline (es.
+                // nave vicino al bordo: startingScore molto negativo, ma nessun candidato con
+                // totalScore positivo esisteva -> nessun piano veniva mai salvato). Con
+                // int.MinValue viene sempre selezionato il migliore tra i candidati sopravvissuti
+                // ai filtri; il check finale (bestBrScore > startingScore) decide comunque se
+                // eseguire l'azione.
+                int bestBrScore = int.MinValue;
                 string bestBrPlanName = null;
 
                 float halfBase = thisShip.ShipBase.HALF_OF_SHIPSTAND_SIZE;
@@ -971,7 +1046,9 @@ namespace AI.Aggressor
                         ShipPositionInfo savedPos = thisShip.GetPositionInfo();
                         thisShip.SetPositionInfo(new ShipPositionInfo(finalPos, finalAngles));
 
-                        int tacticalScore   = GetTacticalScoreFromCurrentPosition(thisShip);
+                        int tacticalScore = EXCLUDE_TACTICAL_SCORE_FROM_BR
+                            ? 0
+                            : GetTacticalScoreFromCurrentPosition(thisShip);
                         // Fix incoerenza: la penalità bullseye va valutata anche sui candidati,
                         // non solo sulla baseline, altrimenti il confronto è asimmetrico
                         // (esattamente il problema di design segnalato nella sessione precedente).
@@ -982,6 +1059,13 @@ namespace AI.Aggressor
 
                         int edgePenalty = GetEdgePenalty(finalPos);
                         int totalScore  = tacticalScore + edgePenalty + bullseyePenalty;
+                        if (EXCLUDE_TACTICAL_SCORE_FROM_BR) totalScore += BR_ZERO_TACTICAL_OFFSET;
+
+                        if (DEBUG_BULLSEYE)
+                        {
+                            Debug.Log($"[BR-Bullseye-DEBUG] Candidato {dir.Name}:{shiftNames[i]} -> " +
+                                      $"tactical={tacticalScore} edge={edgePenalty} bullseye={bullseyePenalty} totale={totalScore}");
+                        }
 
                         if (totalScore > bestBrScore)
                         {
@@ -989,6 +1073,23 @@ namespace AI.Aggressor
                             bestBrPlanName = dir.Name + ":" + shiftNames[i];
                         }
                     }
+                }
+
+                if (DEBUG_BULLSEYE)
+                {
+                    bool planAdded = bestBrScore > startingScore && bestBrPlanName != null;
+                    string bestBrScoreDisplay = (bestBrPlanName == null)
+                        ? "N/A (nessun candidato ha superato i filtri bounds/ostacolo/nave)"
+                        : bestBrScore.ToString();
+                    // ATTENZIONE: questo metodo non esegue il Barrel Roll, si limita a
+                    // registrare un piano CANDIDATO in AiPlans. La scelta finale — se questo
+                    // piano viene davvero usato invece di un'altra azione con priorità più
+                    // alta — avviene in BarrelRollAction.GetActionPriority() e poi in
+                    // AggressorAiPlayer.PerformActionFromList(), NON visibile da questo file.
+                    // "PIANO AGGIUNTO" non garantisce che la nave farà davvero il Barrel Roll.
+                    Debug.Log($"[BR-Bullseye-DEBUG] DECISIONE -> startingScore={startingScore} bestBrScore={bestBrScoreDisplay} " +
+                              $"bestBrPlanName={bestBrPlanName ?? "(nessuno)"} => " +
+                              $"{(planAdded ? $"PIANO BR AGGIUNTO A AiPlans (priority={bestBrScore})" : "nessun piano aggiunto")}");
                 }
 
                 // Il barrel roll è conveniente solo se migliora la situazione attuale
@@ -1193,6 +1294,15 @@ namespace AI.Aggressor
                 ~0, // tutti i layer: non abbiamo un layer dedicato confermato per gli ostacoli
                 QueryTriggerInteraction.Collide // esplicito: i collider ostacolo sono trigger in Low quality
             );
+
+            if (DEBUG_BULLSEYE)
+            {
+                string hitsSummary = hits.Length == 0
+                    ? "(nessuna)"
+                    : string.Join(" | ", hits.Select(h => $"{h.gameObject.name}[tag={h.tag},trig={h.isTrigger}]"));
+                Debug.Log($"[BR-Bullseye-DEBUG] Query: shipPos={ship.GetPosition()} boxCenter={boxCenter} " +
+                          $"halfExtents={halfExtents} hitsGrezzi={hits.Length} :: {hitsSummary}");
+            }
 
             foreach (Collider hit in hits)
             {
