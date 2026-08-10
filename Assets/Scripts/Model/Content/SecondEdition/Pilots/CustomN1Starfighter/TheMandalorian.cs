@@ -65,7 +65,7 @@ namespace Abilities.SecondEdition
 
             foreach (GenericShip enemyShip in HostShip.Owner.EnemyShips.Values)
             {
-                int rangeInFrontSector = enemyShip.SectorsInfo.RangeToShipBySector(HostShip, ArcType.Front);
+                int rangeInFrontSector = HostShip.SectorsInfo.RangeToShipBySector(enemyShip, ArcType.Front);
                 if (Combat.Defender.ShipId == HostShip.ShipId || (Combat.Attacker.ShipId == HostShip.ShipId && Combat.ChosenWeapon.WeaponType == Ship.WeaponTypes.PrimaryWeapon))
                 {
                     if (rangeInFrontSector <= 2) //rangeInFrontSector >= 1 && 

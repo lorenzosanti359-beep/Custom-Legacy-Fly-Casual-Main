@@ -1,0 +1,365 @@
+﻿using Upgrade;
+using Ship;
+using ActionsList;
+using System;
+using SubPhases;
+using System.Collections.Generic;
+using Actions;
+using System.Linq;
+using Tokens;
+using BoardTools;
+using Arcs;
+
+namespace UpgradesList.SecondEdition
+{
+    public class AdaptiveSFoilsClosed : GenericDualUpgrade
+    {
+        public AdaptiveSFoilsClosed() : base()
+        {
+            IsHidden = true;
+            NameCanonical = "adaptivesfoils-sideb";
+
+            UpgradeInfo = new UpgradeCardInfo(
+                "Adaptive S-Foils (Closed)",
+                UpgradeType.Configuration,
+                cost: 0,
+                addActions: new List<ActionInfo>()
+                {
+                            new ActionInfo(typeof(ReloadAction)), 
+                            new ActionInfo(typeof(BoostAction), ActionColor.Red)      
+                },
+                addActionLink: new LinkedActionInfo(typeof(BarrelRollAction), typeof(EvadeAction)),
+                restriction: new ShipRestriction(typeof(Ship.SecondEdition.ASF01BWingMark2.ASF01BWingMark2)),
+                abilityType: typeof(Abilities.SecondEdition.AdaptiveSFoilsClosedAbility)
+            );
+
+            IsSecondSide = true;
+            AnotherSide = typeof(AdaptiveSFoilsClosedOpen);
+        }
+    }
+
+    public class AdaptiveSFoilsClosedOpen : GenericDualUpgrade
+    {
+        public AdaptiveSFoilsClosedOpen() : base()
+        {
+            UpgradeInfo = new UpgradeCardInfo(
+                "Adaptive S-Foils (Open)",
+                UpgradeType.Configuration,
+                cost: 0,
+                restriction: new ShipRestriction(typeof(Ship.SecondEdition.ASF01BWingMark2.ASF01BWingMark2)),
+                abilityType: typeof(Abilities.SecondEdition.AdaptiveSFoilsOpenAbility)
+            );
+
+            AnotherSide = typeof(AdaptiveSFoilsClosed);
+            NameCanonical = "adaptivesfoils";
+        }
+    }
+}
+
+namespace Abilities.SecondEdition
+{
+    public abstract class AdaptiveSFoilsCommonAbility : GenericAbility
+    {
+        protected abstract bool AIWantsToFlip();
+
+        protected abstract string FlipQuestion { get; }
+
+        protected void TurnSFoilsToClosedPosition()
+        {
+            Phases.Events.OnGameStart -= TurnSFoilsToClosedPosition;
+            //HostShip.WingsClose();
+        }
+
+        protected void TurnSFoilsToAttackPosition(GenericShip ship)
+        {
+            //HostShip.WingsOpen();
+        }
+
+        private void RegisterAskToUseFlip(GenericShip ship)
+        {
+            if (!HostShip.Damage.HasFaceupCards)
+                RegisterAbilityTrigger(TriggerTypes.OnMovementActivationStart, AskToFlip);
+        }
+
+        protected void AskToFlip(object sender, EventArgs e)
+        {
+            AskToUseAbility(
+                HostUpgrade.UpgradeInfo.Name,
+                AIWantsToFlip,
+                DoFlipSide,
+                descriptionLong: FlipQuestion,
+                imageHolder: HostUpgrade
+            );
+        }
+
+        protected void DoFlipSide(object sender, EventArgs e)
+        {
+            (HostUpgrade as GenericDualUpgrade).Flip();
+            DecisionSubPhase.ConfirmDecision();
+        }
+
+        public override void ActivateAbility()
+        {
+            HostShip.OnMovementActivationStart += RegisterAskToUseFlip;
+        }
+
+        public override void DeactivateAbility()
+        {
+            HostShip.OnMovementActivationStart -= RegisterAskToUseFlip;
+        }
+    }
+
+    public class AdaptiveSFoilsClosedAbility : AdaptiveSFoilsCommonAbility
+    {
+        public override void ActivateAbility()
+        {
+            base.ActivateAbility();
+            Phases.Events.OnGameStart += TurnSFoilsToClosedPosition;
+            //HostShip.BeforeTokenIsAssigned += CheckAbility;
+            //RegisterAbilityTrigger(TriggerTypes.OnBoost, AskToReplaceToken);
+            HostShip.OnActionIsPerformed += CheckConditions;
+        }
+
+        public override void DeactivateAbility()
+        {
+            base.DeactivateAbility();
+            Phases.Events.OnGameStart -= TurnSFoilsToClosedPosition;
+            TurnSFoilsToAttackPosition(HostShip);
+            HostShip.OnActionIsPerformed -= CheckConditions;
+        }
+
+        protected override string FlipQuestion
+        {
+            get
+            {
+                return string.Format("{0}: Open the S-Foils?", HostShip.PilotInfo.PilotName);
+            }
+        }
+
+        protected override bool AIWantsToFlip()
+        {
+            /// TODO: Add more inteligence to this decision
+            return true;
+        }
+        private void CheckConditions(GenericAction action)
+        {
+            if (action is BoostAction)
+            {
+                HostShip.OnActionDecisionSubphaseEnd += RegisterTrigger;
+            }
+        }
+        private void RegisterTrigger(GenericShip ship)
+        {
+            HostShip.OnActionDecisionSubphaseEnd -= RegisterTrigger;
+
+            Triggers.RegisterTrigger(new Trigger()
+            {
+                Name = HostName + "'s ability",
+                TriggerType = TriggerTypes.OnActionDecisionSubPhaseEnd,
+                TriggerOwner = HostShip.Owner.PlayerNo,
+                EventHandler = AskToReplaceToken
+            });
+        }
+        private void AskToReplaceToken(object sender, System.EventArgs e)
+        {
+            AskToUseAbility(
+                HostUpgrade.UpgradeInfo.Name,
+                AlwaysUseByDefault,
+                ReplaceToken,
+                descriptionLong: "Do you want to gain 1 Strain token to remove Stress token?",
+                imageHolder: HostUpgrade
+            );
+        }
+
+        private void ReplaceToken(object sender, System.EventArgs e)
+        {
+            DecisionSubPhase.ConfirmDecisionNoCallback();
+
+            HostShip.Tokens.AssignToken(typeof(StrainToken), RemoveStressToken);
+        }
+
+        private void RemoveStressToken()
+        {
+            HostShip.Tokens.RemoveToken(typeof(StressToken), Triggers.FinishTrigger);
+        }
+    }
+
+    public class AdaptiveSFoilsOpenAbility : AdaptiveSFoilsCommonAbility
+    {
+        // After you perform an attack, you may spend your lock on the defender to perform a bonus cannon attack
+        // against that ship using a cannon upgrade you have not attacked with this turn.
+        
+        private IShipWeapon AlreadyUsedCannon;
+        private GenericShip Defender;
+
+        public override void ActivateAbility()
+        {
+            base.ActivateAbility();
+            TurnSFoilsToAttackPosition(HostShip);
+            HostShip.OnAttackFinishAsAttacker += CheckAbility;
+            HostShip.Ai.OnGetWeaponPriority += ModifyWeaponPriority;
+        }
+
+        public override void DeactivateAbility()
+        {
+            base.DeactivateAbility();
+            TurnSFoilsToClosedPosition();
+            HostShip.OnAttackFinishAsAttacker -= CheckAbility;
+            HostShip.Ai.OnGetWeaponPriority -= ModifyWeaponPriority;
+        }
+
+        private void CheckAbility(GenericShip ship)
+        {
+            if (!ActionsHolder.HasTargetLockOn(HostShip, Combat.Defender)) return;
+
+            if (HostShip.IsCannotAttackSecondTime) return;
+
+            var availableCannons = HostShip.UpgradeBar
+                .GetInstalledUpgrades(UpgradeType.Cannon)
+                .Where(c => c != Combat.ShotInfo.Weapon);
+
+            if (availableCannons.Any())
+            {
+                Defender = Combat.Defender;
+                AlreadyUsedCannon = Combat.ShotInfo.Weapon.WeaponType == WeaponTypes.Cannon ? Combat.ShotInfo.Weapon : null;
+                HostShip.OnCombatCheckExtraAttack += RegisterSecondAttackTrigger;
+            }
+            else
+            {
+                Defender = null;
+                AlreadyUsedCannon = null;
+            }
+        }
+
+        private void ModifyWeaponPriority(GenericShip targetShip, IShipWeapon weapon, ref int priority)
+        {
+            //If this is first attack, and ship has lock and can also attack with another cannon priorize non-cannon weapon
+            if
+            (
+                !HostShip.IsAttackPerformed
+                && weapon.WeaponType != WeaponTypes.Cannon
+                && ActionsHolder.HasTargetLockOn(HostShip, targetShip)
+                && CanAttackTargetWithBothThisAndCannon(targetShip, weapon)
+            )
+            {
+                priority += 2000;
+            }
+        }
+
+        private bool CanAttackTargetWithBothThisAndCannon(GenericShip targetShip, IShipWeapon weapon)
+        {
+            //AI tries to check non-cannon weapon first
+            ShotInfo shot = new ShotInfo(HostShip, targetShip, weapon);
+
+            var hasCannonShot = HostShip.UpgradeBar
+                .GetInstalledUpgrades(UpgradeType.Cannon)
+                .Where(c => c != weapon)
+                .Any(c =>
+                {
+                    var cannon = c as IShipWeapon;
+                    if (cannon == null) return false;
+
+                    return new ShotInfo(HostShip, targetShip, cannon).IsShotAvailable;
+                });
+            
+            return shot.IsShotAvailable && hasCannonShot;
+        }
+
+        private void RegisterSecondAttackTrigger(GenericShip ship)
+        {
+            HostShip.OnCombatCheckExtraAttack -= RegisterSecondAttackTrigger;
+
+            RegisterAbilityTrigger(TriggerTypes.OnCombatCheckExtraAttack, PerformBonusAttack);
+        }
+
+        private void PerformBonusAttack(object sender, System.EventArgs e)
+        {
+            if (!HostShip.IsCannotAttackSecondTime)
+            {
+                HostShip.IsCannotAttackSecondTime = true;
+
+       
+                
+                Combat.StartSelectAttackTarget(
+                   HostShip,
+                   FinishAdditionalAttack,
+                   IsAllowedAttack,
+                   HostUpgrade.UpgradeInfo.Name,
+                   "You may spend your lock to perform a bonus cannon attack against the same ship",
+                   HostUpgrade,
+                   payAttackCost: SpendLock);
+          
+            }
+            else
+            {
+                Messages.ShowErrorToHuman(string.Format("{0} cannot attack an additional time", HostShip.PilotInfo.PilotName));
+                Triggers.FinishTrigger();
+            }
+        }
+
+        private void SpendLock(Action callback)
+        {
+            List<char> tlLetter = ActionsHolder.GetTargetLocksLetterPairs(HostShip, Combat.Defender);
+            if (tlLetter.Any() &&  (!Combat.Attacker.SectorsInfo.IsShipInSector(Combat.Defender, ArcType.Bullseye)))
+            {
+
+                    HostShip.Tokens.SpendToken(typeof(BlueTargetLockToken), callback, tlLetter.First());
+
+            }
+            else
+            {
+                Messages.ShowInfo("Target is in bullseye arc, Lock not spent");
+                callback();
+            }
+        }
+
+        private void FinishAdditionalAttack()
+        {
+            // If attack is skipped, set this flag, otherwise regular attack can be performed second time
+            HostShip.IsAttackPerformed = true;
+
+            //if bonus attack was skipped, allow bonus attacks again
+            if (HostShip.IsAttackSkipped) HostShip.IsCannotAttackSecondTime = false;
+
+            Triggers.FinishTrigger();
+        }
+
+        private bool IsAllowedAttack(GenericShip defender, IShipWeapon weapon, bool isSilent)
+        {
+            if (defender != Defender)
+            {
+                if (!isSilent) Messages.ShowError("Your attack must be against the same ship");
+                return false;
+            }
+
+            if (weapon == AlreadyUsedCannon)
+            {
+                if (!isSilent) Messages.ShowError("You must use a cannon you have not attacked with this round");
+                return false;
+            }
+
+            if (weapon.WeaponType != WeaponTypes.Cannon)
+            {
+                if (!isSilent) Messages.ShowError("Your attack must use a cannon");
+                return false;
+            }
+
+            return true;
+        }
+
+
+        protected override string FlipQuestion
+        {
+            get
+            {
+                return string.Format("{0}: Close the S-Foils?", HostShip.PilotInfo.PilotName);
+            }
+        }
+
+        protected override bool AIWantsToFlip()
+        {
+            /// TODO: Add more inteligence to this decision
+            return false;
+        }
+    }
+}

@@ -32,11 +32,41 @@ namespace Abilities.SecondEdition
         public override void ActivateAbility()
         {
             HostShip.OnCoordinateTargetIsSelected += RegisterAbilityEvents;
+            HostShip.Ai.OnGetActionPriority += BoostCoordinatePriority;
         }
 
         public override void DeactivateAbility()
         {
             HostShip.OnCoordinateTargetIsSelected -= RegisterAbilityEvents;
+            HostShip.Ai.OnGetActionPriority -= BoostCoordinatePriority;
+        }
+
+        // Bonus di priorità AI per Coordinate quando questa nave è pilotata da
+        // Lieutenant Sai. Iscritto tramite l'hook generico
+        // CustomizedAi.OnGetActionPriority (vedi CustomizedAi.cs:
+        // CallGetActionPriority viene invocato per OGNI azione valutata su OGNI
+        // nave, in AggressorAiPlayer.PerformActionFromList, subito dopo
+        // action.GetActionPriority()) — CoordinateAction resta generica, non sa
+        // nulla di questa logica: è Sai ad "alzare la mano" quando l'azione
+        // valutata è un Coordinate.
+        //
+        // Motivazione tattica: l'abilità di Sai concede un'azione gratuita anche
+        // a Sai stesso se la nave coordinata esegue un'azione presente anche
+        // sulla sua action bar (vedi RegisterAbility/AbilityTakeFreeAction più
+        // sotto) — un Coordinate riuscito con Sai vale potenzialmente due azioni
+        // invece di una.
+        // Valore di primo passaggio (40, come il bonus analogo già calibrato su
+        // Reinforce in questa sessione): porta la priorità tipica di Coordinate
+        // da 30 a 30+40=70, in linea con il massimo tipico di Boost osservato in
+        // questo codebase — da validare in game, non ancora testato.
+        private const int SAI_COORDINATE_BONUS = 40;
+
+        private void BoostCoordinatePriority(GenericAction action, ref int priority)
+        {
+            if (action is CoordinateAction)
+            {
+                priority += SAI_COORDINATE_BONUS;
+            }
         }
 
         private void RegisterAbilityEvents(GenericShip targetShip)

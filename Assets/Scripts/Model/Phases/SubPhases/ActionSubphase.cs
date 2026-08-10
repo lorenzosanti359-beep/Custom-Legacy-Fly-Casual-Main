@@ -232,12 +232,26 @@ namespace SubPhases
         public override void PrepareDecision(System.Action callBack)
         {
             DescriptionShort = DescriptionShort ?? "Select free action";
-            DefaultDecisionName = "Focus";
 
             List<GenericAction> availableActions = Selection.ThisShip.GetAvailableFreeActions();
 
             if (availableActions.Count > 0)
             {
+                // FIX: "Focus" era hardcoded, indipendente da quali azioni libere
+                // fossero davvero disponibili o da quanto fossero valide
+                // tatticamente (es. dopo un Coordinate di Lieutenant Sai, che ora
+                // alza la priorità di Coordinate stesso ma non tocca in alcun modo
+                // quale azione libera risultante sia la migliore). Calcolato ora
+                // con la stessa logica — GetActionPriority() + hook
+                // Ai.CallGetActionPriority — già usata in
+                // AggressorAiPlayer.PerformActionFromList per l'azione principale
+                // della nave, così un'AI che riceve un'azione libera (da Coordinate,
+                // da altre abilità, ecc.) sceglie davvero la migliore disponibile in
+                // quel momento, non sempre e comunque Focus. Stesso principio già
+                // in uso per ReinforceAction/ReinforceSideSubphase (DefaultDecisionName
+                // calcolato dinamicamente in ActionTake()), qui applicato allo stesso
+                // meccanismo generico DoDefault()/DefaultDecisionName di DecisionSubPhase.
+                DefaultDecisionName = GetBestFreeActionName(availableActions);
                 GenerateFreeActionButtons();
                 callBack();
             }
@@ -250,6 +264,57 @@ namespace SubPhases
             }
         }
 
+        // Sceglie l'azione libera con priorità più alta tra quelle disponibili,
+        // usando la STESSA fonte di verità di PerformActionFromList (priorità base
+        // dell'azione + eventuale bonus di un'abilità agganciata a Ai.OnGetActionPriority,
+        // es. il bonus di Lieutenant Sai su Coordinate) — non una logica separata o
+        // ridondante. Ritorna "Focus" solo come ultima rete di sicurezza se
+        // availableActions fosse vuota (non dovrebbe accadere: già filtrato dal
+        // chiamante), non come default arbitrario.
+        private string GetBestFreeActionName(List<GenericAction> availableActions)
+        {
+            GenericAction bestAction = null;
+            int bestPriority = int.MinValue;
+
+            foreach (GenericAction action in availableActions)
+            {
+                int priority = action.GetActionPriority();
+                Selection.ThisShip.Ai.CallGetActionPriority(action, ref priority);
+
+                if (priority > bestPriority)
+                {
+                    bestPriority = priority;
+                    bestAction = action;
+                }
+            }
+
+            return (bestAction != null) ? GetFullDecisionName(bestAction) : "Focus";
+        }
+
+        // Estratta dal corpo di GenerateFreeActionButtons: garantisce che
+        // DefaultDecisionName combaci SEMPRE, carattere per carattere, con
+        // l'etichetta del pulsante realmente generato per la stessa azione (colore +
+        // eventuali azioni collegate) — nessuna duplicazione della logica tra le due,
+        // nessun rischio che il nome calcolato come "migliore" non corrisponda a
+        // nessun pulsante realmente presente.
+        private string GetFullDecisionName(GenericAction action)
+        {
+            bool addedDecisionWithLink = false;
+            string decisionName = GetActionNameColored(action);
+
+            foreach (var kv in Selection.ThisShip.ActionBar.LinkedActions)
+            {
+                if (action.GetType() == kv.Key)
+                {
+                    string linkedActionName = GetActionNameColored(kv.Value);
+                    decisionName += addedDecisionWithLink ? " / " + linkedActionName : " > " + linkedActionName;
+                    addedDecisionWithLink = true;
+                }
+            }
+
+            return decisionName;
+        }
+
         public void GenerateFreeActionButtons()
 		{
 			Selection.ThisShip.IsFreeActionSkipped = false;
@@ -257,33 +322,8 @@ namespace SubPhases
 
             foreach (var action in availableActions)
             {
-                bool addedDecisionWithLink = false;
-
-                string decisionName = GetActionNameColored(action);
-
-                foreach (var kv in Selection.ThisShip.ActionBar.LinkedActions)
-                {
-                    Type actionType = kv.Key;
-                    GenericAction linkedAction = kv.Value;
-
-                    if (action.GetType() == actionType)
-                    {
-                        string linkedActionName = GetActionNameColored(kv.Value);
-
-                        if (!addedDecisionWithLink)
-                        {
-                            decisionName += " > " + linkedActionName;
-                            addedDecisionWithLink = true;
-                        }
-                        else
-                        {
-                            decisionName += " / " + linkedActionName;
-                        }
-                    }
-                }
-
                 AddDecision(
-                    decisionName,
+                    GetFullDecisionName(action),
                     delegate {
                         ActionWasPerformed = true;
                         Selection.ThisShip.CallBeforeActionIsPerformed(
