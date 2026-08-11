@@ -40,7 +40,7 @@ namespace Editions
         public override string PathToCampaignSetup { get { return "CampaignSetup";  } }
         public override string PathToElitePilotUpgrades { get { return "ElitePilotUpgrades"; } }
 
-        public override string RootUrlForImages { get { return "https://raw.githubusercontent.com/SogeMoge/x-wing2.0-project-goldenrod/2.0-legacy/src/images/En/"; } }
+        public override string RootUrlForImages { get { return "https://raw.githubusercontent.com/lorenzosanti359-beep/x-wing2.0-project-goldenrod/2.0-legacy/src/images/En/"; } }
         public override Vector2 UpgradeCardSize { get { return new Vector2(418, 300); } }
         public override Vector2 UpgradeCardCompactOffset { get { return new Vector2(168, 2); } }
         public override Vector2 UpgradeCardCompactSize { get { return new Vector2(237, 296); } }
