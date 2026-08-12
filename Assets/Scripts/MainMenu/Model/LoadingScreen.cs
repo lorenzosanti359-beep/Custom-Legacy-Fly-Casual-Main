@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +13,7 @@ public static class LoadingScreen
     private static readonly float SECONDS_TO_WAIT = 4f;
     private static bool IsReady;
     private static Action Callback;
+    private static Coroutine typewriterCoroutine;
 
     private static readonly List<string> Tips = new List<string>()
     {
@@ -48,7 +49,7 @@ public static class LoadingScreen
         "To know your Enemy, you must become your Enemy",
         "He will win who knows when to fight and when not to fight",
         "Know yourself and you will win all battles",
-        "Tactics without strategy is the noise before defeat", // Author is unknown, but this is in style of Sun Tzu
+        "Tactics without strategy is the noise before defeat",
 
         // Controls
         "To measure distance to a ship: click Right Mouse Button on it",
@@ -76,7 +77,7 @@ public static class LoadingScreen
         "Try spinning - that's a good trick",
         "Do, or do not. There is no try.",
         "May the Force be with you!",
-        "01110010 01101111 01100111 01100101 01110010\n01110010 01101111 01100111 01100101 01110010",  // "roger roger" in binary
+        "01110010 01101111 01100111 01100101 01110010\n01110010 01101111 01100111 01100101 01110010",
         "Permission to jump in an X-wing and blow something up?"
     };
 
@@ -91,16 +92,47 @@ public static class LoadingScreen
         Text LoadingText = loadingScreen.Find("LoadingInfoPanel").GetComponentInChildren<Text>();
         if (loadingScreen != null) loadingScreen.gameObject.SetActive(true);
 
+        if (typewriterCoroutine != null)
+        {
+            Global.Instance.StopCoroutine(typewriterCoroutine);
+            typewriterCoroutine = null;
+        }
+
         if (!DontWaitFewSeconds)
         {
-            LoadingText.text = Tips[UnityEngine.Random.Range(0, Tips.Count)];
+            string selectedTip = Tips[UnityEngine.Random.Range(0, Tips.Count)];
+            typewriterCoroutine = Global.Instance.StartCoroutine(TypewriterTextCoroutine(LoadingText, selectedTip));
             Global.Instance.StartCoroutine(WaitFewSeconds());
         }
         else
         {
-            LoadingText.text = "Loading...";
+            LoadingText.text = "> LOADING TACTICAL DATA...";
             WaitingIsFinished();
         }
+    }
+
+    private static IEnumerator TypewriterTextCoroutine(Text textComponent, string fullText)
+    {
+        if (textComponent == null) yield break;
+
+        textComponent.text = "> ";
+        float charDelay = 0.025f;
+
+        for (int i = 0; i < fullText.Length; i++)
+        {
+            textComponent.text = "> " + fullText.Substring(0, i + 1) + "_";
+            yield return new WaitForSecondsRealtime(charDelay);
+        }
+
+        bool showCursor = true;
+        while (!IsReady)
+        {
+            textComponent.text = "> " + fullText + (showCursor ? "_" : " ");
+            showCursor = !showCursor;
+            yield return new WaitForSecondsRealtime(0.4f);
+        }
+
+        textComponent.text = "> " + fullText;
     }
 
     private static Sprite GetRandomSplashScreen()
@@ -139,7 +171,7 @@ public static class LoadingScreen
         Transform loadingScreen = GameObject.Find("GlobalUI").transform.Find("LoadingScreen");
         if (loadingScreen != null) loadingScreen.gameObject.SetActive(false);
 
-        Callback();
+        if (Callback != null) Callback();
     }
 
     public static void NextSceneIsReady(Action callback)
@@ -149,4 +181,3 @@ public static class LoadingScreen
         if (IsReady) Hide();
     }
 }
-
