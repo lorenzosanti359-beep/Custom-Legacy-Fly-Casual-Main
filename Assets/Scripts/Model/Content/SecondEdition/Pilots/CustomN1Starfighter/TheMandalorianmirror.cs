@@ -22,7 +22,7 @@ namespace Ship
                     40,
                     isLimited: true,
                     abilityText: "While you defend or perform a primary attack....",
-                    abilityType: typeof(Abilities.SecondEdition.TheMandalorianNabooN1StarfighterAbility),
+                    abilityType: typeof(Abilities.SecondEdition.TheMandalorianNabooN1StarfighterAbilityMirror),
                     tags: new List<Tags>
                     {
                         Tags.Mandalorian,
@@ -40,7 +40,7 @@ namespace Ship
 
 namespace Abilities.SecondEdition
 {
-    public class TheMandalorianNabooN1StarfighterAbility : GenericAbility
+    public class TheMandalorianNabooN1StarfighterAbilityMirror : GenericAbility
     {
         public override void ActivateAbility()
         {
