@@ -32,7 +32,7 @@ namespace Ship
                     factionOverride: Faction.Scum
                 );
 
-                PilotNameCanonical = "themandalorian-customn1starfighter";
+                PilotNameCanonical = "themandalorianmirror-customn1starfighter";
             }
         }
     }
