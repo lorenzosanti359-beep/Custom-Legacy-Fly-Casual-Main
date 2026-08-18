@@ -12,9 +12,9 @@ namespace Ship
 {
     namespace SecondEdition.CustomN1Starfighter
     {
-        public class TheMandalorian : CustomN1Starfighter
+        public class themandalorianmirror : CustomN1Starfighter
         {
-            public TheMandalorian() : base()
+            public themandalorianmirror() : base()
             {
                 PilotInfo = new PilotCardInfo(
                     "The Mandalorian",
